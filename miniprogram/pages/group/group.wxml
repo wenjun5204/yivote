@@ -1,0 +1,21 @@
+<view class="page">
+  <view class="gh">
+    <view class="eyebrow">群成员共同维护的协作档案</view>
+    <view class="h">常打球的这群人</view>
+    <view class="p">群备注名 · 从本群卡片进来的活动都会归在这里</view>
+    <view class="stats">
+      <view class="stat"><text class="n">6</text><text class="t">场活动</text></view>
+      <view class="stat"><text class="n">41</text><text class="t">人次到场</text></view>
+      <view class="stat"><text class="n">92</text><text class="t">凝聚力分</text></view>
+    </view>
+  </view>
+  <view class="menu" bindtap="onMenu" data-k="calendar">
+    <text class="mi">📅</text><view class="mm"><text class="b">群日历</text><text class="s">这个群一起张罗过的日子（v1.3 上线）</text></view><text class="arrow">›</text>
+  </view>
+  <view class="menu" bindtap="onMenu" data-k="history">
+    <text class="mi">🗂️</text><view class="mm"><text class="b">历史活动</text><text class="s">报过的名、分过的工，都在这里</text></view><text class="arrow">›</text>
+  </view>
+  <view class="menu" bindtap="onMenu" data-k="rename">
+    <text class="mi">✏️</text><view class="mm"><text class="b">群名备注</text><text class="s">成员共编，谁来都能改</text></view><text class="arrow">›</text>
+  </view>
+</view>

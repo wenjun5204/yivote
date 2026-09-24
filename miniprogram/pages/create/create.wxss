@@ -1,0 +1,50 @@
+.page { padding: 0 32rpx 200rpx; }
+.create-hero { padding: 48rpx 8rpx 20rpx; color: #fff; background: #0e5937; margin: -24rpx -32rpx 32rpx; }
+.create-hero .eyebrow { font-size: 24rpx; color: #b9e7c7; letter-spacing: 4rpx; }
+.create-hero .h { font-size: 48rpx; font-weight: 800; margin-top: 14rpx; }
+.create-hero .p { font-size: 26rpx; color: #c9ebd4; margin-top: 10rpx; padding-bottom: 36rpx; }
+.tpl-grid { display: flex; flex-wrap: wrap; gap: 20rpx; }
+.tpl {
+  width: calc(50% - 10rpx);
+  box-sizing: border-box;
+  background: #fff;
+  border: 3rpx solid #dce3da;
+  border-radius: 30rpx;
+  padding: 28rpx;
+  font-size: 34rpx;
+  text-align: left;
+  line-height: 1.4;
+}
+.tpl.sel { border-color: #18794e; background: #e5f4e9; }
+.tpl .b { display: block; font-size: 28rpx; font-weight: 700; margin-top: 12rpx; color: #172019; }
+.tpl .s { display: block; font-size: 22rpx; color: #667067; margin-top: 6rpx; }
+.label { font-size: 24rpx; color: #667067; font-weight: 700; margin: 44rpx 4rpx 16rpx; }
+.title-input {
+  background: #fff;
+  border: 3rpx solid #dce3da;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  font-size: 30rpx;
+}
+.slot-grid { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.slot-chip {
+  background: #fff;
+  border: 3rpx solid #dce3da;
+  border-radius: 20rpx;
+  font-size: 28rpx;
+  padding: 16rpx 30rpx;
+  margin: 0;
+}
+.slot-chip.sel { border-color: #18794e; background: #e5f4e9; }
+.create-btn {
+  position: fixed;
+  left: 32rpx;
+  right: 32rpx;
+  bottom: calc(48rpx + env(safe-area-inset-bottom));
+  background: #18794e;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 800;
+  border-radius: 28rpx;
+  box-shadow: 0 16rpx 28rpx rgba(24, 121, 78, .22);
+}

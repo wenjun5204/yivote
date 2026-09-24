@@ -1,0 +1,55 @@
+<!-- 投票详情：分享卡片直达页（≤2 次点击完成投票，零键盘） -->
+<view class="page" wx:if="{{vote}}">
+  <view class="context">
+    <view class="avatar">{{vote.owner.nickname[0] || '友'}}</view>
+    <text>{{vote.owner.nickname}}发起 · 点亮你有空的时间</text>
+  </view>
+  <view class="vtitle">{{vote.title}}</view>
+
+  <view class="status-card">
+    <view class="status-top">
+      <text>已投 <text class="strong">{{voterCount}}</text> 人</text>
+      <text wx:if="{{bestLabel}}" class="lead">{{bestLabel}}最多人有空</text>
+    </view>
+    <view class="progress"><view class="fill" style="width: {{progress}}%"></view></view>
+  </view>
+
+  <block wx:if="{{vote.status === 'OPEN'}}">
+    <view class="slot" wx:for="{{vote.slots}}" wx:key="slotId"
+      data-id="{{item.slotId}}" bindtap="toggle" style="{{item.picked ? 'border-color:#18794e;background:#e5f4e9' : ''}}">
+      <view class="slot-top">
+        <text class="slot-name">{{item.label}}</text>
+        <text class="slot-count">{{item.count}} 人</text>
+        <text wx:if="{{item.isBest}}" class="best-tag">最多人有空</text>
+      </view>
+      <view class="faces">
+        <text class="face" wx:for="{{item.voters}}" wx:for-item="v" wx:key="userId" wx:if="{{index < 5}}">{{v.nickname[0]}}</text>
+        <text wx:if="{{item.count > 5}}" class="more">+{{item.count - 5}}</text>
+      </view>
+    </view>
+
+    <view class="tips">选完点下面按钮就记上了，截止前随时能改</view>
+  </block>
+
+  <block wx:else>
+    <view class="locked-banner">
+      <view class="stamp">定</view>
+      <view class="locked-text">已定档：{{lockedLabel}} · 到场 {{lockedCount}} 人</view>
+    </view>
+    <view class="roster">
+      <view class="person" wx:for="{{lockedVoters}}" wx:key="userId">
+        <text class="face big">{{item.nickname[0]}}</text>
+        <text>{{item.nickname}}</text>
+      </view>
+    </view>
+  </block>
+</view>
+<view class="page" wx:else>
+  <view class="loading">正在打开投票…</view>
+</view>
+
+<button wx:if="{{vote && vote.status === 'OPEN' && !isOwner}}" class="main-btn" disabled="{{!picked.length}}" bindtap="submit">
+  {{submitted ? '改一下我的时间' : '就这些时间我有空'}}
+</button>
+<button wx:if="{{vote && vote.status === 'OPEN' && isOwner}}" class="main-btn ghost" bindtap="lockBest">就定人数最多的时间</button>
+<button wx:if="{{vote && vote.status === 'LOCKED'}}" class="main-btn ghost" bindtap="shareResult">把结果卡片发回群里</button>

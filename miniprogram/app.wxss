@@ -1,0 +1,19 @@
+/* 全局样式：与 docs/prototype/index.html 设计令牌一致（纸面绿系） */
+page {
+  background: #f4f7f1;
+  color: #172019;
+  font-size: 30rpx; /* ≥15pt 正文下限（协作工具人群较广，仍保底大字） */
+}
+.btn-primary {
+  background: #18794e;
+  color: #fff;
+  border-radius: 28rpx;
+  font-weight: 700;
+}
+.btn-secondary {
+  background: #fff;
+  color: #0e5937;
+  border: 3rpx solid #18794e;
+  border-radius: 28rpx;
+  font-weight: 700;
+}

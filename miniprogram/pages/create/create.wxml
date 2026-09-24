@@ -1,0 +1,25 @@
+<!-- 发起 tab：场景模板 + 标题 + 时段勾选（微信官方组件） -->
+<view class="page">
+  <view class="create-hero">
+    <view class="eyebrow">30 秒建好 · 发到群里</view>
+    <view class="h">先选一个常用场景</view>
+    <view class="p">用模板减少输入，群友点开后直接参与。</view>
+  </view>
+
+  <view class="tpl-grid">
+    <button class="tpl {{tpl === 'ball' ? 'sel' : ''}}" data-tpl="ball" data-title="下周球局，哪天人最齐？" bindtap="pickTpl">🏸<text class="b">约球 / 聚会</text><text class="s">周末半天时段</text></button>
+    <button class="tpl {{tpl === 'dinner' ? 'sel' : ''}}" data-tpl="dinner" data-title="下次聚餐，大家哪天方便？" bindtap="pickTpl">🍲<text class="b">聚餐 / 团建</text><text class="s">晚间和周末</text></button>
+    <button class="tpl {{tpl === 'family' ? 'sel' : ''}}" data-tpl="family" data-title="家里聚餐，哪天大家有空？" bindtap="pickTpl">🏠<text class="b">家庭聚餐</text><text class="s">全家一起选</text></button>
+    <button class="tpl {{tpl === 'custom' ? 'sel' : ''}}" data-tpl="custom" bindtap="pickTpl">✏️<text class="b">自己出题</text><text class="s">按您的事来</text></button>
+  </view>
+
+  <view class="label">投票标题</view>
+  <input class="title-input" value="{{title}}" maxlength="30" bindinput="onTitle" placeholder="一句话说清要定什么事" />
+
+  <view class="label">候选时间（勾几个都行，建议 ≤ 8 个）</view>
+  <view class="slot-grid">
+    <button wx:for="{{slots}}" wx:key="id" class="slot-chip {{item.selected ? 'sel' : ''}}" data-id="{{item.id}}" bindtap="toggleSlot">{{item.label}}</button>
+  </view>
+</view>
+
+<button class="create-btn" bindtap="createVote">创建并分享到群</button>

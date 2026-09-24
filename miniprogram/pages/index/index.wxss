@@ -1,0 +1,41 @@
+.page { padding: 24rpx 32rpx 160rpx; }
+.hero {
+  padding: 48rpx 40rpx;
+  border-radius: 40rpx;
+  background: linear-gradient(135deg, #0e5937, #18794e);
+  color: #fff;
+}
+.hero-eyebrow { font-size: 24rpx; opacity: .85; letter-spacing: 4rpx; }
+.hero-title { font-size: 50rpx; font-weight: 800; margin: 16rpx 0 8rpx; }
+.hero-desc { font-size: 26rpx; color: #d1ebd9; }
+.hero-btn {
+  margin-top: 34rpx;
+  background: #fff;
+  color: #0e5937;
+  font-size: 28rpx;
+  font-weight: 800;
+  border-radius: 22rpx;
+}
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin: 42rpx 4rpx 18rpx;
+  font-weight: 700;
+}
+.section-head .sub { font-size: 22rpx; color: #667067; font-weight: 400; }
+.empty { text-align: center; color: #667067; font-size: 26rpx; padding: 60rpx 0; }
+.activity {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1rpx solid #dce3da;
+  border-radius: 30rpx;
+  padding: 28rpx;
+  margin-bottom: 20rpx;
+  text-align: left;
+}
+.activity-body { flex: 1; }
+.activity-title { font-size: 30rpx; font-weight: 700; }
+.activity-sub { font-size: 22rpx; color: #667067; margin-top: 8rpx; }
+.activity-status { color: #18794e; font-size: 24rpx; font-weight: 700; }

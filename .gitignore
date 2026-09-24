@@ -1,0 +1,11 @@
+# Maven
+backend/target/
+backend/data/
+
+# 小程序工具产物
+miniprogram/**/miniprogram_npm/
+miniprogram/project.private.config.json
+
+# 系统
+.DS_Store
+*.log

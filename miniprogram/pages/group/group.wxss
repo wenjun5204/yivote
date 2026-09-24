@@ -1,0 +1,15 @@
+.page { padding: 0 0 80rpx; }
+.gh { padding: 44rpx 40rpx 36rpx; background: linear-gradient(135deg, #eff8f1, #fff8d5); }
+.eyebrow { font-size: 22rpx; color: #18794e; font-weight: 800; letter-spacing: 4rpx; }
+.h { font-size: 46rpx; font-weight: 800; margin: 14rpx 0 8rpx; }
+.p { font-size: 24rpx; color: #667067; }
+.stats { display: flex; gap: 14rpx; margin-top: 30rpx; }
+.stat { flex: 1; background: rgba(255,255,255,.78); border-radius: 20rpx; padding: 18rpx 0; text-align: center; }
+.stat .n { display: block; font-size: 36rpx; font-weight: 800; color: #0e5937; }
+.stat .t { display: block; font-size: 20rpx; color: #667067; margin-top: 4rpx; }
+.menu { display: flex; align-items: center; gap: 22rpx; background: #fff; border: 2rpx solid #dce3da; border-radius: 28rpx; margin: 24rpx 32rpx 0; padding: 28rpx; }
+.mi { font-size: 40rpx; }
+.mm { flex: 1; }
+.mm .b { display: block; font-size: 30rpx; font-weight: 700; }
+.mm .s { display: block; font-size: 22rpx; color: #667067; margin-top: 6rpx; }
+.arrow { color: #667067; font-size: 40rpx; }

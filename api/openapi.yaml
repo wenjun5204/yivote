@@ -1,0 +1,220 @@
+openapi: 3.0.3
+info:
+  title: 咦投票 API
+  version: 0.1.0
+  description: |
+    咦投票（微信群协作工具）后端契约——OpenAPI 为前后端唯一事实源（SSOT）。
+    领域：群投票（凑时间/拿主意）、收集填表（v1.1）、群待办（v1.2）、群日历（v1.3）。
+    MVP 范围（PRD v1.4）：群投票独撑 P0；AA/资金类功能永久不做（决策 D5）。
+
+    鉴权链路：
+    - 登录：POST /api/auth/login（云托管 X-WX-OPENID 注入或本地 code 回退）
+    - 后续：Authorization: Bearer {userId}
+    - openGId 由分享票据在前端解出后随请求传入（群维度聚合键）
+
+    设计依据：docs/PRD-咦投票.md
+servers:
+  - url: http://127.0.0.1:8080
+    description: 本地开发（H2）
+  - url: https://yivote.example.com
+    description: 微信云托管（cloud profile，仅经 callContainer 访问，不得开公网路径）
+
+paths:
+  /api/ping:
+    get:
+      summary: 健康探活
+      tags: [infra]
+      security: []
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: "ok" }
+
+  /api/auth/login:
+    post:
+      summary: 登录（X-WX-OPENID 静默注入；本地 code 回退）
+      tags: [auth]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code: { type: string, description: "本地联调回退：code 即 openid；云托管链路可空" }
+      responses:
+        '200':
+          description: 登录成功
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+
+  /api/votes:
+    post:
+      summary: 发起投票（创建并返回分享所需数据）
+      tags: [vote]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VoteCreateRequest' }
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VoteDetail' }
+
+  /api/votes/{voteId}:
+    get:
+      summary: 投票详情（分享卡片直达页数据）
+      tags: [vote]
+      parameters:
+        - { name: voteId, in: path, required: true, schema: { type: integer, format: int64 } }
+        - { name: openGId, in: query, required: false, schema: { type: string }, description: "群标识（首次从群卡片进入时上报，用于群维度归档）" }
+      responses:
+        '200':
+          description: 详情
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VoteDetail' }
+
+  /api/votes/{voteId}/ballots:
+    put:
+      summary: 提交/改投我的选票（幂等覆盖，信任三原则之「可改不可逃」）
+      tags: [vote]
+      parameters:
+        - { name: voteId, in: path, required: true, schema: { type: integer, format: int64 } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/BallotSubmitRequest' }
+      responses:
+        '200':
+          description: 已记录（返回最新汇总，含我是否已投标记）
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VoteDetail' }
+
+  /api/votes/{voteId}/lock:
+    post:
+      summary: 定档（组织者收口动作；返回到场名单）
+      tags: [vote]
+      parameters:
+        - { name: voteId, in: path, required: true, schema: { type: integer, format: int64 } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [slotId]
+              properties:
+                slotId: { type: integer, description: "定档时段 id" }
+      responses:
+        '200':
+          description: 已定档
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VoteDetail' }
+
+  /api/votes/mine:
+    get:
+      summary: 我发起 + 我参与的列表（「我的事」tab）
+      tags: [vote]
+      responses:
+        '200':
+          description: 列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/VoteSummary' }
+
+components:
+  schemas:
+    LoginResponse:
+      type: object
+      properties:
+        token: { type: string }
+        userId: { type: integer, format: int64 }
+        nickname: { type: string }
+        avatarUrl: { type: string, nullable: true }
+
+    VoteCreateRequest:
+      type: object
+      required: [title, type, slots]
+      properties:
+        title: { type: string, maxLength: 30, description: "UGC，后端过内容安全接口" }
+        type: { type: string, enum: [TIME, CHOICE], description: "TIME=凑时间(多选聚合)，CHOICE=拿主意(单选)" }
+        openGId: { type: string, nullable: true, description: "发起人所在群（可空）" }
+        deadline: { type: string, format: date-time, nullable: true }
+        slots:
+          type: array
+          maxItems: 8
+          items:
+            type: object
+            required: [label]
+            properties:
+              label: { type: string, maxLength: 12, example: "周六下午" }
+
+    BallotSubmitRequest:
+      type: object
+      required: [slotIds]
+      properties:
+        slotIds:
+          type: array
+          items: { type: integer }
+          description: "TIME 多选；CHOICE 单选数组长度 1"
+
+    VoteSummary:
+      type: object
+      properties:
+        voteId: { type: integer, format: int64 }
+        title: { type: string }
+        type: { type: string, enum: [TIME, CHOICE] }
+        status: { type: string, enum: [OPEN, LOCKED], description: "OPEN=进行中，LOCKED=已定档" }
+        voterCount: { type: integer }
+        myRole: { type: string, enum: [OWNER, VOTER, NONE] }
+        updatedAt: { type: string, format: date-time }
+
+    VoteDetail:
+      type: object
+      properties:
+        voteId: { type: integer, format: int64 }
+        title: { type: string }
+        type: { type: string, enum: [TIME, CHOICE] }
+        status: { type: string, enum: [OPEN, LOCKED] }
+        owner: { $ref: '#/components/schemas/UserBrief' }
+        deadline: { type: string, format: date-time, nullable: true }
+        slots:
+          type: array
+          items:
+            type: object
+            properties:
+              slotId: { type: integer }
+              label: { type: string }
+              count: { type: integer }
+              isBest: { type: boolean, description: "票数最多（并列则多个 true）" }
+              voters:
+                type: array
+                items: { $ref: '#/components/schemas/UserBrief' }
+        mySlotIds: { type: array, items: { type: integer }, description: "我当前的选票（改投预亮）" }
+        lockedSlotId: { type: integer, nullable: true, description: "定档时段（LOCKED 时非空）——该时段投票者即到场名单" }
+
+    UserBrief:
+      type: object
+      properties:
+        userId: { type: integer, format: int64 }
+        nickname: { type: string }
+        avatarUrl: { type: string, nullable: true }

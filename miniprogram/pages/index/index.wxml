@@ -1,0 +1,29 @@
+<!-- 我的事 tab：hero 发起入口 + 链路 + 进行中列表（微信官方组件：view/button/navigator） -->
+<view class="page">
+  <view class="hero">
+    <view class="hero-eyebrow">下一件事，先把时间凑齐</view>
+    <view class="hero-title">发起投票</view>
+    <view class="hero-desc">选好时间发到群里，大家点开就能参与。</view>
+    <button class="hero-btn" bindtap="goCreate">30 秒发起一场 →</button>
+  </view>
+
+  <view class="section-head">
+    <text>进行中的活动</text>
+    <text class="sub">{{items.length}} 场</text>
+  </view>
+  <view wx:if="{{loading}}" class="empty">正在加载…</view>
+  <view wx:elif="{{items.length === 0}}" class="empty">还没有进行中的活动\n从群里点开一张卡片，就能参与</view>
+  <button
+    wx:for="{{items}}"
+    wx:key="voteId"
+    class="activity"
+    data-id="{{item.voteId}}"
+    bindtap="openVote"
+  >
+    <view class="activity-body">
+      <view class="activity-title">{{item.title}}</view>
+      <view class="activity-sub">{{item.myRole === 'OWNER' ? '我发起的' : ''}} · 已投 {{item.voterCount}} 人</view>
+    </view>
+    <view class="activity-status">{{item.status === 'OPEN' ? '去投票' : '已定档'}}</view>
+  </button>
+</view>
