@@ -1,2 +1,2 @@
 org.springframework.boot.env.EnvironmentPostProcessor=\
-  com.example.backend.config.CloudEnvPostProcessor
+  com.yivote.backend.config.CloudEnvPostProcessor

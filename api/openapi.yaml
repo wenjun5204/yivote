@@ -22,6 +22,7 @@ servers:
 paths:
   /api/ping:
     get:
+      operationId: ping
       summary: 健康探活
       tags: [infra]
       security: []
@@ -37,6 +38,7 @@ paths:
 
   /api/auth/login:
     post:
+      operationId: login
       summary: 登录（X-WX-OPENID 静默注入；本地 code 回退）
       tags: [auth]
       security: []
@@ -57,6 +59,7 @@ paths:
 
   /api/votes:
     post:
+      operationId: createVote
       summary: 发起投票（创建并返回分享所需数据）
       tags: [vote]
       requestBody:
@@ -73,6 +76,7 @@ paths:
 
   /api/votes/{voteId}:
     get:
+      operationId: getVote
       summary: 投票详情（分享卡片直达页数据）
       tags: [vote]
       parameters:
@@ -87,6 +91,7 @@ paths:
 
   /api/votes/{voteId}/ballots:
     put:
+      operationId: submitBallot
       summary: 提交/改投我的选票（幂等覆盖，信任三原则之「可改不可逃」）
       tags: [vote]
       parameters:
@@ -105,6 +110,7 @@ paths:
 
   /api/votes/{voteId}/lock:
     post:
+      operationId: lockVote
       summary: 定档（组织者收口动作；返回到场名单）
       tags: [vote]
       parameters:
@@ -127,6 +133,7 @@ paths:
 
   /api/votes/mine:
     get:
+      operationId: myVotes
       summary: 我发起 + 我参与的列表（「我的事」tab）
       tags: [vote]
       responses:

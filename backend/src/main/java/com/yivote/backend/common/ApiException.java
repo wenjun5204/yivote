@@ -26,6 +26,10 @@ public class ApiException extends RuntimeException {
         return new ApiException("40300", message);
     }
 
+    public static ApiException forbidden(String message) {
+        return new ApiException("40300", message);
+    }
+
     public static ApiException notFound(String message) {
         return new ApiException("40400", message);
     }
