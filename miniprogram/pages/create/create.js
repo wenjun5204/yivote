@@ -1,15 +1,18 @@
 const { request, ensureLogin } = require('../../utils/request')
 
+/** 候选时段:全周铺开(工作日晚间 + 周末全天),按周内顺序排列 */
 const SLOT_DEFS = [
-  { id: 0, label: '周五晚上' }, { id: 1, label: '周六上午' }, { id: 2, label: '周六下午' },
-  { id: 3, label: '周六晚上' }, { id: 4, label: '周日上午' }, { id: 5, label: '周日晚上' },
+  { id: 0, label: '周一晚上' }, { id: 1, label: '周二晚上' }, { id: 2, label: '周三晚上' },
+  { id: 3, label: '周四晚上' }, { id: 4, label: '周五晚上' }, { id: 5, label: '周六上午' },
+  { id: 6, label: '周六下午' }, { id: 7, label: '周六晚上' }, { id: 8, label: '周日上午' },
+  { id: 9, label: '周日下午' }, { id: 10, label: '周日晚上' },
 ]
 
 /** 场景模板:标题 + 默认勾选时段(「30 秒发起」的核心——选完模板基本不用再动) */
 const TEMPLATES = {
-  ball:   { title: '下周球局，哪天人最齐？', slots: [0, 2, 3] },        // 约球:周末三个半天
-  dinner: { title: '下次聚餐，大家哪天方便？', slots: [0, 3, 5] },      // 聚餐/团建:晚间为主
-  family: { title: '家里聚餐，哪天大家有空？', slots: [1, 2, 4] },      // 家庭:白天为主
+  ball:   { title: '下周球局，哪天人最齐？', slots: [4, 6, 7] },        // 约球:周五晚起周末连场
+  dinner: { title: '下次聚餐，大家哪天方便？', slots: [2, 4, 7] },      // 聚餐/团建:工作日晚+周末晚
+  family: { title: '家里聚餐，哪天大家有空？', slots: [5, 6, 8] },      // 家庭:周末白天为主
   custom: null,
 }
 
@@ -17,7 +20,7 @@ Page({
   data: {
     tpl: 'ball',
     title: '下周球局，哪天人最齐？',
-    slots: SLOT_DEFS.map((s) => ({ ...s, selected: [0, 2, 3].includes(s.id) })),
+    slots: SLOT_DEFS.map((s) => ({ ...s, selected: [4, 6, 7].includes(s.id) })),
   },
 
   pickTpl(e) {

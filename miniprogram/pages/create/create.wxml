@@ -16,7 +16,7 @@
   <view class="label">投票标题</view>
   <input class="title-input" value="{{title}}" maxlength="30" bindinput="onTitle" placeholder="一句话说清要定什么事" />
 
-  <view class="label">候选时间（勾几个都行，建议 ≤ 8 个）</view>
+  <view class="label">候选时间（全周可选，勾几个都行，建议 ≤ 8 个）</view>
   <view class="slot-grid">
     <button wx:for="{{slots}}" wx:key="id" class="slot-chip {{item.selected ? 'sel' : ''}}" data-id="{{item.id}}" bindtap="toggleSlot">{{item.label}}</button>
   </view>
