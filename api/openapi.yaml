@@ -4,7 +4,7 @@ info:
   version: 0.1.0
   description: |
     咦投票（微信群协作工具）后端契约——OpenAPI 为前后端唯一事实源（SSOT）。
-    领域：群投票（凑时间/拿主意）、收集填表（v1.1）、群待办（v1.2）、群日历（v1.3）。
+    领域：群投票（凑时间/拿主意）、收集填表（v1.1）、群日历（v1.3）。MVP 期与 v1.1/v1.3 一并交付。
     MVP 范围（PRD v1.4）：群投票独撑 P0；AA/资金类功能永久不做（决策 D5）。
 
     鉴权链路：
@@ -148,6 +148,133 @@ paths:
                     type: array
                     items: { $ref: '#/components/schemas/VoteSummary' }
 
+  /api/collects:
+    post:
+      operationId: createCollect
+      summary: 发起收集填表（自定义字段表单）
+      tags: [collect]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CollectCreateRequest' }
+      responses:
+        '200':
+          description: 创建成功
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CollectDetail' }
+
+  /api/collects/{collectId}:
+    get:
+      operationId: getCollect
+      summary: 收集详情（填表/汇总双视角数据）
+      tags: [collect]
+      parameters:
+        - { name: collectId, in: path, required: true, schema: { type: integer, format: int64 } }
+      responses:
+        '200':
+          description: 详情
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CollectDetail' }
+
+  /api/collects/{collectId}/entries:
+    put:
+      operationId: submitEntry
+      summary: 提交/修改我的填报（幂等覆盖，可改不可逃）
+      tags: [collect]
+      parameters:
+        - { name: collectId, in: path, required: true, schema: { type: integer, format: int64 } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [values]
+              properties:
+                values:
+                  type: array
+                  items: { type: string, maxLength: 60 }
+                  description: "按字段顺序的值数组；TEXT=文本，CHIP=选项值"
+      responses:
+        '200':
+          description: 已记录
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CollectDetail' }
+
+  /api/collects/{collectId}/export:
+    get:
+      operationId: exportCollect
+      summary: 复制汇总名单（发起人视角，纯文本）
+      tags: [collect]
+      parameters:
+        - { name: collectId, in: path, required: true, schema: { type: integer, format: int64 } }
+      responses:
+        '200':
+          description: 纯文本名单
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  text: { type: string, example: "1. 老张 手机:138****1101 尺码:L
+2. 李姐 …" }
+
+  /api/groups/{openGId}:
+    get:
+      operationId: getGroupProfile
+      summary: 群档案（备注名/战功/凝聚力分——群板 tab 数据源）
+      tags: [group]
+      parameters:
+        - { name: openGId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: 群档案（不存在则返回默认空档案，首次进入时懒建）
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GroupProfile' }
+
+  /api/groups/{openGId}/name:
+    put:
+      operationId: renameGroup
+      summary: 改群备注名（成员共编）
+      tags: [group]
+      parameters:
+        - { name: openGId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, maxLength: 16, description: "群备注名，UGC 过内容安全" }
+      responses:
+        '200':
+          description: 已更新
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GroupProfile' }
+
+  /api/groups/{openGId}/calendar:
+    get:
+      operationId: groupCalendar
+      summary: 群日历（v1.3）——某月活动分布 + 点日回看
+      tags: [group]
+      parameters:
+        - { name: openGId, in: path, required: true, schema: { type: string } }
+        - { name: month, in: query, required: true, schema: { type: string, example: "2026-09" } }
+      responses:
+        '200':
+          description: 月视图数据
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GroupCalendar' }
+
 components:
   schemas:
     LoginResponse:
@@ -225,3 +352,85 @@ components:
         userId: { type: integer, format: int64 }
         nickname: { type: string }
         avatarUrl: { type: string, nullable: true }
+
+    CollectCreateRequest:
+      type: object
+      required: [title, fields]
+      properties:
+        title: { type: string, maxLength: 30 }
+        openGId: { type: string, nullable: true }
+        fields:
+          type: array
+          minItems: 1
+          maxItems: 6
+          items:
+            type: object
+            required: [label, kind]
+            properties:
+              label: { type: string, maxLength: 12, example: "球衣尺码" }
+              kind: { type: string, enum: [TEXT, CHIP], description: "TEXT=文本框，CHIP=点选" }
+              options:
+                type: array
+                items: { type: string, maxLength: 12 }
+                description: "CHIP 类型的候选项（≤8 个）"
+
+    FieldDetail:
+      type: object
+      properties:
+        fieldId: { type: integer }
+        label: { type: string }
+        kind: { type: string, enum: [TEXT, CHIP] }
+        options: { type: array, items: { type: string }, nullable: true }
+
+    EntryDetail:
+      type: object
+      description: 一个人的一行填报
+      properties:
+        user: { $ref: '#/components/schemas/UserBrief' }
+        values: { type: array, items: { type: string } }
+
+    CollectDetail:
+      type: object
+      properties:
+        collectId: { type: integer, format: int64 }
+        title: { type: string }
+        status: { type: string, enum: [OPEN, CLOSED] }
+        owner: { $ref: '#/components/schemas/UserBrief' }
+        fields:
+          type: array
+          items: { $ref: '#/components/schemas/FieldDetail' }
+        entries:
+          type: array
+          items: { $ref: '#/components/schemas/EntryDetail' }
+        myValues: { type: array, items: { type: string }, description: "我已填的值（改填预填）；空=未填" }
+        filledCount: { type: integer }
+        notFilledHint: { type: string, description: "发起人视角的补位提示" }
+
+    GroupProfile:
+      type: object
+      properties:
+        openGId: { type: string }
+        name: { type: string, description: "群备注名；未设置时为「这个群」" }
+        activityCount: { type: integer, description: "归档到此群的活动数" }
+        attendeeTotal: { type: integer, description: "人次到场合计" }
+        cohesionScore: { type: integer, description: "凝聚力分（只升不降；活动数×10 + 满链×20，MVP 简化公式）" }
+
+    CalendarActivity:
+      type: object
+      properties:
+        date: { type: string, format: date, description: "活动定档日（无定档的用更新日）" }
+        title: { type: string }
+        kind: { type: string, enum: [VOTE, COLLECT], description: "MVP 期活动类型" }
+        refId: { type: integer, format: int64 }
+        chain: { type: array, items: { type: string, enum: [vote, collect, todo] }, description: "该活动走过的链路段（月视图链路小点）" }
+        attendeeCount: { type: integer, description: "到场/参与人数" }
+        fullChain: { type: boolean, description: "满链标记" }
+
+    GroupCalendar:
+      type: object
+      properties:
+        month: { type: string, example: "2026-09" }
+        activities:
+          type: array
+          items: { $ref: '#/components/schemas/CalendarActivity' }
+        profile: { $ref: '#/components/schemas/GroupProfile' }

@@ -19,4 +19,7 @@ public interface VoteRepository extends JpaRepository<VoteEntity, Long> {
             order by v.updatedAt desc
             """)
     List<VoteEntity> findMine(@Param("userId") Long userId);
+
+    /** 群维度归档(群板/群日历数据源) */
+    List<VoteEntity> findByOpenGId(String openGId);
 }
