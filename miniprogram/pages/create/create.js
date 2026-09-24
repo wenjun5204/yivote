@@ -42,6 +42,10 @@ Page({
     this.setData({ slots })
   },
 
+  goCollect() {
+    wx.navigateTo({ url: '/pages/collect-create/collect-create' })
+  },
+
   createVote() {
     const selected = this.data.slots.filter((s) => s.selected)
     if (!this.data.title.trim()) {

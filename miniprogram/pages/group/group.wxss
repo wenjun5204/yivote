@@ -13,3 +13,8 @@
 .mm .b { display: block; font-size: 30rpx; font-weight: 700; }
 .mm .s { display: block; font-size: 22rpx; color: #667067; margin-top: 6rpx; }
 .arrow { color: #667067; font-size: 40rpx; }
+.empty { padding-top: 180rpx; text-align: center; }
+.empty-ico { font-size: 90rpx; }
+.empty-h { font-size: 36rpx; font-weight: 800; margin-top: 24rpx; }
+.empty-p { font-size: 26rpx; color: #667067; margin: 16rpx 60rpx 0; line-height: 1.7; }
+.loading { text-align: center; padding-top: 200rpx; color: #667067; font-size: 26rpx; }

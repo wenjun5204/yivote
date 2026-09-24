@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class VoteService {
 
     private static final int MAX_SLOTS = 8;
+    private static final int MAX_GID_LEN = 64;
 
     private final VoteRepository voteRepository;
     private final VoteSlotRepository slotRepository;
@@ -102,7 +103,21 @@ public class VoteService {
 
     @Transactional(readOnly = true)
     public VoteDetail detail(Long voteId, Long userId) {
+        return detail(voteId, null, userId);
+    }
+
+    /**
+     * 详情(带群归档):首次有人带 openGId 从群卡片打开时,把投票归到该群——
+     * 只在原值为空时写入(先到先得),后续不同群的卡片打开不覆盖。
+     */
+    @Transactional
+    public VoteDetail detail(Long voteId, String openGId, Long userId) {
         VoteEntity vote = requireVote(voteId);
+        String gid = trimToNull(openGId);
+        if (gid != null && vote.getOpenGId() == null && gid.length() <= MAX_GID_LEN) {
+            vote.setOpenGId(gid);
+            vote = voteRepository.save(vote);
+        }
         return toDetail(vote, userId);
     }
 

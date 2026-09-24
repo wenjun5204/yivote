@@ -3,7 +3,10 @@
     "pages/index/index",
     "pages/group/group",
     "pages/vote/vote",
-    "pages/create/create"
+    "pages/create/create",
+    "pages/collect-create/collect-create",
+    "pages/collect/collect",
+    "pages/calendar/calendar"
   ],
   "window": {
     "navigationBarTitleText": "咦投票",

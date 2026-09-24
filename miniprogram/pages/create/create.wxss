@@ -48,3 +48,9 @@
   border-radius: 28rpx;
   box-shadow: 0 16rpx 28rpx rgba(24, 121, 78, .22);
 }
+.collect-entry { display: flex; align-items: center; gap: 20rpx; background: #fff; border: 2rpx dashed #9cc7ab; border-radius: 28rpx; margin-top: 44rpx; padding: 26rpx 28rpx; }
+.ce-ico { font-size: 40rpx; }
+.ce-main { flex: 1; }
+.ce-b { display: block; font-size: 28rpx; font-weight: 700; color: #0e5937; }
+.ce-s { display: block; font-size: 22rpx; color: #667067; margin-top: 6rpx; }
+.ce-arrow { color: #667067; font-size: 38rpx; }

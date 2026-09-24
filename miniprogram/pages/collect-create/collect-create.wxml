@@ -1,0 +1,23 @@
+<!-- 发起收集:标题 + 字段(文本/点选) -->
+<view class="page">
+  <view class="label">收集标题</view>
+  <input class="title-input" value="{{title}}" maxlength="30" bindinput="onTitle" placeholder="一句话说清收什么，如：球队新赛季报名" />
+
+  <view class="label">要收的字段（≤6 项）</view>
+  <view class="field-row" wx:for="{{fields}}" wx:key="index">
+    <input class="field-input" value="{{item.label}}" maxlength="12" data-index="{{index}}" bindinput="onFieldLabel" placeholder="字段名，如：手机号" />
+    <picker mode="selector" range="{{kindOptions}}" value="{{item.kindIndex}}" data-index="{{index}}" bindchange="onKind">
+      <view class="kind-pick">{{item.kind === 'TEXT' ? '文本' : '点选'}}</view>
+    </picker>
+    <button class="del" data-index="{{index}}" bindtap="removeField">×</button>
+  </view>
+
+  <!-- 点选字段的候选项 -->
+  <view wx:for="{{fields}}" wx:key="index" wx:if="{{item.kind === 'CHIP' && item.showOptions}}">
+    <view class="label small">「{{item.label}}」的候选项（逗号分隔，如 S,M,L）</view>
+    <input class="title-input" value="{{item.optionsText}}" data-index="{{index}}" bindinput="onOptions" placeholder="S,M,L,XL" />
+  </view>
+
+  <button class="add-field" bindtap="addField">＋ 加一个字段</button>
+</view>
+<button class="create-btn" bindtap="createCollect">创建并分享到群</button>

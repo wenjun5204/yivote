@@ -95,6 +95,30 @@ class GroupServiceTest {
         assertThrows(ApiException.class, () -> groupService.calendar(" ", "2026-09"));
     }
 
+    @Test
+    void detailOpensArchiveToGroupFirstComeFirstServed() {
+        Long owner = login("arc-owner-" + System.nanoTime());
+        Long member = login("arc-member-" + System.nanoTime());
+
+        // 发起时不带群标识(创建在小程序内,群归属未知)
+        VoteDetail vote = createVote(owner, null, "散投球局");
+        CollectDetail collect = createCollect(owner, null, "散投报名表");
+
+        // 群友 A 从「og-arc-a」的群卡片打开 → 归档到该群
+        CurrentUser.set(member);
+        voteService.detail(vote.getVoteId(), "og-arc-a", member);
+        collectService.detail(collect.getCollectId(), "og-arc-a", member);
+        assertEquals(2, groupService.profile("og-arc-a").getActivityCount(), "首次带卡片打开应归档");
+
+        // 群友 B 从另一个群的卡片打开 → 不覆盖已归档的群
+        Long other = login("arc-other-" + System.nanoTime());
+        CurrentUser.set(other);
+        voteService.detail(vote.getVoteId(), "og-arc-b", other);
+        collectService.detail(collect.getCollectId(), "og-arc-b", other);
+        assertEquals(0, groupService.profile("og-arc-b").getActivityCount(), "后续打开不重复归档");
+        assertEquals(2, groupService.profile("og-arc-a").getActivityCount());
+    }
+
     /* ---------------- helpers ---------------- */
 
     private Long login(String code) {

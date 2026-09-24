@@ -1,0 +1,53 @@
+<!-- 群日历:月格子 + 链路小点 + 点日展开 + 群战功 -->
+<view class="page" wx:if="{{loaded}}">
+  <view class="profile-card">
+    <view class="gh-name">{{profile.name}}</view>
+    <view class="gh-sub">群备注名 · 成员共编</view>
+    <view class="stats">
+      <view class="stat"><text class="n">{{profile.activityCount}}</text><text class="t">场活动</text></view>
+      <view class="stat"><text class="n">{{profile.attendeeTotal}}</text><text class="t">人次到场</text></view>
+      <view class="stat"><text class="n">{{profile.cohesionScore}}</text><text class="t">凝聚力分</text></view>
+    </view>
+  </view>
+
+  <view class="cal-card">
+    <view class="cal-head">
+      <button class="cal-nav" bindtap="prevMonth">‹</button>
+      <text class="cal-month">{{month}}</text>
+      <button class="cal-nav" bindtap="nextMonth">›</button>
+    </view>
+    <view class="week">
+      <text wx:for="{{weeks}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="days">
+      <view wx:for="{{cells}}" wx:key="index"
+        class="day {{item.type === 'blank' ? 'blank' : ''}} {{item.type === 'today' ? 'today' : ''}} {{item.type === 'event' ? 'event' : ''}} {{item.type === 'sel' ? 'sel' : ''}}"
+        data-index="{{index}}" bindtap="pickDay">
+        <text>{{item.day || ''}}</text>
+        <view wx:if="{{item.type === 'event' || item.type === 'sel'}}" class="dots">
+          <text wx:for="{{item.chain}}" wx:for-item="c" wx:key="*this"
+            class="dot {{c === 'vote' ? 'd-vote' : c === 'collect' ? 'd-collect' : 'd-todo'}}"></text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="day-detail">
+    <view wx:if="{{!selectedActivities.length && selectedDate}}" class="empty-day">
+      {{selectedDate}} 没安排。<text class="invite" bindtap="goCreate">这约一场？</text>
+    </view>
+    <view wx:for="{{selectedActivities}}" wx:key="refId" class="event-card" data-kind="{{item.kind}}" data-ref="{{item.refId}}" bindtap="openActivity">
+      <view class="event-date"><text>{{item.dayNum}}</text></view>
+      <view class="event-main">
+        <text class="event-title">{{item.title}}</text>
+        <text class="event-sub">{{item.attendeeCount}} 人参与 · {{item.kind === 'VOTE' ? '投票' : '收集'}}</text>
+        <view class="badges">
+          <text wx:for="{{item.chain}}" wx:for-item="c" wx:key="*this" class="badge">{{c === 'vote' ? '凑时间' : c === 'collect' ? '凑人头' : '凑分工'}}</text>
+          <text wx:if="{{item.fullChain}}" class="badge full">满链</text>
+        </view>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+</view>
+<view wx:else class="loading">正在打开群日历…</view>

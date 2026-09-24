@@ -42,6 +42,11 @@
         <text>{{item.nickname}}</text>
       </view>
     </view>
+    <view wx:if="{{fromGid}}" class="cal-entry" bindtap="goCalendar">
+      <text class="cal-ico">📅</text>
+      <text class="cal-txt">这场已写进群日历，看看这个群还约过什么</text>
+      <text class="arrow">›</text>
+    </view>
   </block>
 </view>
 <view class="page" wx:else>

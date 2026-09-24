@@ -66,7 +66,7 @@ public class ApiController {
 
     @GetMapping("/votes/{voteId}")
     public VoteDetail getVote(@PathVariable Long voteId, @RequestParam(required = false) String openGId) {
-        return voteService.detail(voteId, CurrentUser.get());
+        return voteService.detail(voteId, openGId, CurrentUser.get());
     }
 
     @PutMapping("/votes/{voteId}/ballots")
@@ -94,8 +94,9 @@ public class ApiController {
     }
 
     @GetMapping("/collects/{collectId}")
-    public CollectDetail getCollect(@PathVariable Long collectId) {
-        return collectService.detail(collectId, CurrentUser.get());
+    public CollectDetail getCollect(@PathVariable Long collectId,
+                                     @RequestParam(required = false) String openGId) {
+        return collectService.detail(collectId, openGId, CurrentUser.get());
     }
 
     @PutMapping("/collects/{collectId}/entries")

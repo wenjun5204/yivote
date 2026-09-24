@@ -1,0 +1,55 @@
+<!-- 收集详情:填表(群友)/汇总(发起人)双视角 -->
+<view class="page" wx:if="{{collect}}">
+  <view class="context">
+    <view class="avatar">{{collect.owner.nickname[0] || '友'}}</view>
+    <text>{{collect.owner.nickname}}发起</text>
+  </view>
+  <view class="vtitle">{{collect.title}}</view>
+
+  <view class="status-card">
+    <view class="status-top">
+      <text>已填 <text class="strong">{{collect.filledCount}}</text> 人</text>
+      <text wx:if="{{collect.status === 'OPEN'}}">表还开着，随时能填</text>
+      <text wx:else>已收表</text>
+    </view>
+  </view>
+
+  <!-- 群友视角:填表 / 我的回执 -->
+  <block wx:if="{{!isOwner}}">
+    <block wx:if="{{collect.status === 'OPEN' && !myValues.length}}">
+      <view class="form-card">
+        <view class="f-row" wx:for="{{collect.fields}}" wx:key="fieldId">
+          <view class="f-label">{{item.label}} *</view>
+          <input wx:if="{{item.kind === 'TEXT'}}" class="f-input" data-index="{{index}}"
+            value="{{values[index] || ''}}" bindinput="onValue" placeholder="填一下" />
+          <view wx:else class="size-chips">
+            <button wx:for="{{item.options}}" wx:for-item="opt" wx:for-index="oi" wx:key="*this"
+              class="chip {{values[index] === opt ? 'sel' : ''}}"
+              data-findex="{{index}}" data-opt="{{opt}}" bindtap="pickChip">{{opt}}</button>
+          </view>
+        </view>
+      </view>
+    </block>
+    <view wx:else class="form-card">
+      <view class="f-label">你的回执</view>
+      <view class="receipt" wx:for="{{myValues}}" wx:key="index">
+        {{collect.fields[index].label}}：{{item}}
+      </view>
+      <button wx:if="{{collect.status === 'OPEN'}}" class="btn-secondary" bindtap="refill">改一下我的信息</button>
+    </view>
+  </block>
+
+  <!-- 发起人视角:汇总名单 -->
+  <block wx:if="{{isOwner}}">
+    <view class="entry-row" wx:for="{{collect.entries}}" wx:key="user.userId">
+      <text class="face">{{item.user.nickname[0]}}</text>
+      <text class="entry-name">{{item.user.nickname}}</text>
+      <text class="entry-vals">{{item.values[0]}}{{item.values[1] ? ' · ' + item.values[1] : ''}}</text>
+      <text class="tag-done">已填</text>
+    </view>
+    <button class="btn-secondary" bindtap="copyExport">复制汇总名单</button>
+  </block>
+</view>
+<view wx:else class="loading">正在打开…</view>
+
+<button wx:if="{{collect && !isOwner && collect.status === 'OPEN' && !myValues.length}}" class="main-btn" disabled="{{!filledAll}}" bindtap="submit">填好了，提交</button>

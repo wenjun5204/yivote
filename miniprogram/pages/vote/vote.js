@@ -1,17 +1,25 @@
 const { request, ensureLogin } = require('../../utils/request')
+const group = require('../../utils/group')
 
 Page({
-  data: { vote: null, picked: [], submitted: false, isOwner: false },
+  data: { vote: null, picked: [], submitted: false, isOwner: false, fromGid: '' },
 
   onLoad(query) {
     this.voteId = query.voteId
+    // 群卡片携带的 openGId：上报归档 + 群 tab 记住最近群 + 转发时继续携带
+    this.openGId = query.openGId || ''
+    if (this.openGId) {
+      group.remember(this.openGId)
+      this.setData({ fromGid: this.openGId })
+    }
     ensureLogin()
       .then(() => this.load())
       .catch(() => wx.showToast({ title: '网络不太好，请稍后再试', icon: 'none' }))
   },
 
   load() {
-    return request('/api/votes/' + this.voteId).then((vote) => {
+    const qs = this.openGId ? '?openGId=' + encodeURIComponent(this.openGId) : ''
+    return request('/api/votes/' + this.voteId + qs).then((vote) => {
       // picked 预亮：mySlotIds 来自契约（改投场景）
       const picked = vote.mySlotIds || []
       this.setData({
@@ -99,6 +107,10 @@ Page({
 
   shareResult() { /* 转发结果卡，见 onShareAppMessage */ },
 
+  goCalendar() {
+    wx.navigateTo({ url: '/pages/calendar/calendar?openGId=' + encodeURIComponent(this.openGId) })
+  },
+
   onShareAppMessage() {
     const v = this.data.vote || {}
     const locked = this.data.lockedLabel
@@ -106,7 +118,7 @@ Page({
       title: locked
         ? `定了！${locked} · ${this.data.lockedCount} 人有空`
         : `就差你了！${v.title} · 已投 ${this.data.voterCount || ''}人`,
-      path: '/pages/vote/vote?voteId=' + this.voteId,
+      path: '/pages/vote/vote?voteId=' + this.voteId + (this.openGId ? '&openGId=' + encodeURIComponent(this.openGId) : ''),
     }
   },
 })

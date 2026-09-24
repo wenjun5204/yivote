@@ -1,0 +1,21 @@
+.page { padding: 28rpx 36rpx 220rpx; }
+.label { font-size: 24rpx; color: #667067; font-weight: 700; margin: 36rpx 4rpx 14rpx; }
+.label.small { margin-top: 14rpx; }
+.title-input, .field-input {
+  background: #fff; border: 3rpx solid #dce3da; border-radius: 24rpx;
+  padding: 22rpx; font-size: 30rpx;
+}
+.field-row { display: flex; gap: 14rpx; align-items: center; margin-bottom: 18rpx; }
+.field-input { flex: 1; }
+.kind-pick {
+  background: #e5f4e9; color: #0e5937; font-size: 26rpx; font-weight: 700;
+  border-radius: 18rpx; padding: 20rpx 28rpx;
+}
+.del { background: #fff; color: #c2463c; font-size: 36rpx; width: 72rpx; height: 72rpx; padding: 0; border-radius: 50%; border: 3rpx solid #dce3da; margin: 0; line-height: 1; }
+.add-field { background: #fff; color: #18794e; border: 3rpx dashed #94c8a3; border-radius: 22rpx; font-size: 28rpx; margin-top: 10rpx; }
+.create-btn {
+  position: fixed; left: 36rpx; right: 36rpx;
+  bottom: calc(48rpx + env(safe-area-inset-bottom));
+  background: #18794e; color: #fff; font-size: 32rpx; font-weight: 800; border-radius: 28rpx;
+  box-shadow: 0 16rpx 28rpx rgba(24, 121, 78, .22);
+}

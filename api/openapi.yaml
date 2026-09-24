@@ -172,6 +172,7 @@ paths:
       tags: [collect]
       parameters:
         - { name: collectId, in: path, required: true, schema: { type: integer, format: int64 } }
+        - { name: openGId, in: query, required: false, schema: { type: string }, description: "群标识（首次从群卡片进入时上报，用于群维度归档；先到先得不覆盖）" }
       responses:
         '200':
           description: 详情

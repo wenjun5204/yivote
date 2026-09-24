@@ -33,6 +33,7 @@ public class CollectService {
 
     private static final int MAX_FIELDS = 6;
     private static final int MAX_OPTIONS = 8;
+    private static final int MAX_GID_LEN = 64;
 
     private final CollectRepository collectRepository;
     private final CollectFieldRepository fieldRepository;
@@ -107,7 +108,21 @@ public class CollectService {
 
     @Transactional(readOnly = true)
     public CollectDetail detail(Long collectId, Long userId) {
+        return detail(collectId, null, userId);
+    }
+
+    /**
+     * 详情(带群归档):首次有人带 openGId 从群卡片打开时归到该群——
+     * 只在原值为空时写入(先到先得),后续不同群的卡片打开不覆盖。
+     */
+    @Transactional
+    public CollectDetail detail(Long collectId, String openGId, Long userId) {
         CollectEntity collect = requireCollect(collectId);
+        String gid = trimToNull(openGId);
+        if (gid != null && collect.getOpenGId() == null && gid.length() <= MAX_GID_LEN) {
+            collect.setOpenGId(gid);
+            collect = collectRepository.save(collect);
+        }
         return toDetail(collect, userId);
     }
 

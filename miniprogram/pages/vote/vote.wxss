@@ -36,3 +36,7 @@
 }
 .main-btn[disabled] { background: #e4e9e4; color: #94a098; box-shadow: none; }
 .main-btn.ghost { background: #fff; color: #0e5937; border: 3rpx solid #18794e; box-shadow: none; }
+.cal-entry { display: flex; align-items: center; gap: 18rpx; background: #fff; border: 2rpx solid #dce3da; border-radius: 28rpx; margin-top: 30rpx; padding: 26rpx 28rpx; }
+.cal-ico { font-size: 38rpx; }
+.cal-txt { flex: 1; font-size: 26rpx; color: #172019; font-weight: 600; }
+.arrow { color: #667067; font-size: 38rpx; }

@@ -20,6 +20,15 @@
   <view class="slot-grid">
     <button wx:for="{{slots}}" wx:key="id" class="slot-chip {{item.selected ? 'sel' : ''}}" data-id="{{item.id}}" bindtap="toggleSlot">{{item.label}}</button>
   </view>
+
+  <view class="collect-entry" bindtap="goCollect">
+    <text class="ce-ico">📋</text>
+    <view class="ce-main">
+      <text class="ce-b">时间定了？接着收人头</text>
+      <text class="ce-s">发起收集填表：手机号、球衣尺码，群友点选就填完</text>
+    </view>
+    <text class="ce-arrow">›</text>
+  </view>
 </view>
 
 <button class="create-btn" bindtap="createVote">创建并分享到群</button>
