@@ -7,9 +7,9 @@
   </view>
 
   <view class="tpl-grid">
-    <button class="tpl {{tpl === 'ball' ? 'sel' : ''}}" data-tpl="ball" data-title="下周球局，哪天人最齐？" bindtap="pickTpl">🏸<text class="b">约球 / 聚会</text><text class="s">周末半天时段</text></button>
-    <button class="tpl {{tpl === 'dinner' ? 'sel' : ''}}" data-tpl="dinner" data-title="下次聚餐，大家哪天方便？" bindtap="pickTpl">🍲<text class="b">聚餐 / 团建</text><text class="s">晚间和周末</text></button>
-    <button class="tpl {{tpl === 'family' ? 'sel' : ''}}" data-tpl="family" data-title="家里聚餐，哪天大家有空？" bindtap="pickTpl">🏠<text class="b">家庭聚餐</text><text class="s">全家一起选</text></button>
+    <button class="tpl {{tpl === 'ball' ? 'sel' : ''}}" data-tpl="ball" bindtap="pickTpl">🏸<text class="b">约球 / 聚会</text><text class="s">周末半天时段</text></button>
+    <button class="tpl {{tpl === 'dinner' ? 'sel' : ''}}" data-tpl="dinner" bindtap="pickTpl">🍲<text class="b">聚餐 / 团建</text><text class="s">晚间和周末</text></button>
+    <button class="tpl {{tpl === 'family' ? 'sel' : ''}}" data-tpl="family" bindtap="pickTpl">🏠<text class="b">家庭聚餐</text><text class="s">全家一起选</text></button>
     <button class="tpl {{tpl === 'custom' ? 'sel' : ''}}" data-tpl="custom" bindtap="pickTpl">✏️<text class="b">自己出题</text><text class="s">按您的事来</text></button>
   </view>
 

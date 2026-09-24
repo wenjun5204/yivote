@@ -5,6 +5,14 @@ const SLOT_DEFS = [
   { id: 3, label: '周六晚上' }, { id: 4, label: '周日上午' }, { id: 5, label: '周日晚上' },
 ]
 
+/** 场景模板:标题 + 默认勾选时段(「30 秒发起」的核心——选完模板基本不用再动) */
+const TEMPLATES = {
+  ball:   { title: '下周球局，哪天人最齐？', slots: [0, 2, 3] },        // 约球:周末三个半天
+  dinner: { title: '下次聚餐，大家哪天方便？', slots: [0, 3, 5] },      // 聚餐/团建:晚间为主
+  family: { title: '家里聚餐，哪天大家有空？', slots: [1, 2, 4] },      // 家庭:白天为主
+  custom: null,
+}
+
 Page({
   data: {
     tpl: 'ball',
@@ -13,9 +21,15 @@ Page({
   },
 
   pickTpl(e) {
-    const { tpl, title } = e.currentTarget.dataset
+    const tpl = e.currentTarget.dataset.tpl
+    const template = TEMPLATES[tpl]
     this.setData({ tpl })
-    if (title) this.setData({ title })
+    if (template) {
+      this.setData({
+        title: template.title,
+        slots: this.data.slots.map((s) => ({ ...s, selected: template.slots.includes(s.id) })),
+      })
+    }
   },
 
   onTitle(e) {
@@ -50,19 +64,10 @@ Page({
         })
       )
       .then((vote) => {
-        // 创建成功 → 转发卡片到群（三段式标题：缺口 + 数字 + 署名）
-        this._createdVote = vote
-        wx.showShareMenu({ withShareTicket: true })
-        wx.showToast({ title: '建好了，去分享到群', icon: 'success' })
+        // 创建成功 → 直达详情页；分享卡片在详情页触发（三段式标题）
+        wx.navigateTo({ url: '/pages/vote/vote?voteId=' + vote.voteId })
       })
       .catch(() => {})
   },
 
-  onShareAppMessage() {
-    const v = this._createdVote || {}
-    return {
-      title: `就差你了！${v.title || '大家来投票'} · 点开就能投`,
-      path: '/pages/vote/vote?voteId=' + (v.voteId || ''),
-    }
-  },
 })
