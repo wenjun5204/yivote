@@ -1,0 +1,25 @@
+<!-- 发起待办：活动标题带入 + 高频模板 + 事项（≤10 字）+ 认领人数 -->
+<view class="page">
+  <view class="label">活动名</view>
+  <input class="title-input" value="{{title}}" maxlength="30" bindinput="onTitle" placeholder="如：周六球局" />
+
+  <view class="label">高频事项，点一下就带上</view>
+  <view class="tpl-row">
+    <button wx:for="{{tplItems}}" wx:key="*this"
+      class="tpl-chip {{tplPicked.indexOf(item) > -1 ? 'sel' : ''}}"
+      data-name="{{item}}" bindtap="toggleTpl">{{item}}</button>
+  </view>
+
+  <view class="label">要分的事（≤10 项）</view>
+  <view class="field-row" wx:for="{{items}}" wx:key="index">
+    <input class="field-input" value="{{item.title}}" maxlength="10" data-index="{{index}}" bindinput="onItemTitle" placeholder="事项名，如订场" />
+    <picker mode="selector" range="{{capOptions}}" value="{{item.capIndex}}" data-index="{{index}}" bindchange="onCap">
+      <view class="cap-pick">{{capOptions[item.capIndex]}}</view>
+    </picker>
+    <button class="del" data-index="{{index}}" bindtap="removeItem">×</button>
+  </view>
+
+  <button class="add-item" bindtap="addItem">＋ 加一件事</button>
+  <view class="note">每项默认限 1 人认领；「买水」这类多人搭把手的可放开人数</view>
+</view>
+<button class="create-btn" bindtap="createTodo">创建并分享到群</button>

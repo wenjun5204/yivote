@@ -1,4 +1,4 @@
-<!-- 我的事 tab：hero 发起入口 + 链路 + 进行中列表（微信官方组件：view/button/navigator） -->
+<!-- 我的事 tab：hero 发起入口 + 进行中列表（投票/收集/待办聚合，微信官方组件） -->
 <view class="page">
   <view class="hero">
     <view class="hero-eyebrow">下一件事，先把时间凑齐</view>
@@ -15,15 +15,20 @@
   <view wx:elif="{{items.length === 0}}" class="empty">还没有进行中的活动\n从群里点开一张卡片，就能参与</view>
   <button
     wx:for="{{items}}"
-    wx:key="voteId"
+    wx:key="uid"
     class="activity"
-    data-id="{{item.voteId}}"
-    bindtap="openVote"
+    data-kind="{{item.kind}}"
+    data-ref="{{item.refId}}"
+    bindtap="openActivity"
   >
     <view class="activity-body">
       <view class="activity-title">{{item.title}}</view>
-      <view class="activity-sub">{{item.myRole === 'OWNER' ? '我发起的' : ''}} · 已投 {{item.voterCount}} 人</view>
+      <view class="activity-sub" wx:if="{{item.kind === 'VOTE'}}">{{item.myRole === 'OWNER' ? '我发起的 · ' : ''}}已投 {{item.voterCount}} 人</view>
+      <view class="activity-sub" wx:elif="{{item.kind === 'COLLECT'}}">{{item.myRole === 'OWNER' ? '我发起的 · ' : ''}}已填 {{item.filledCount}} 人</view>
+      <view class="activity-sub" wx:else>{{item.myRole === 'OWNER' ? '我发起的 · ' : ''}}{{item.summary.done}}/{{item.summary.total}} 件事搞定</view>
     </view>
-    <view class="activity-status">{{item.status === 'OPEN' ? '去投票' : '已定档'}}</view>
+    <view class="activity-status" wx:if="{{item.kind === 'VOTE'}}">{{item.status === 'OPEN' ? '去投票' : '已定档'}}</view>
+    <view class="activity-status" wx:elif="{{item.kind === 'COLLECT'}}">{{item.status === 'OPEN' ? '去填表' : '已收表'}}</view>
+    <view class="activity-status" wx:else>{{item.status === 'OPEN' ? '搭把手' : '全办成了'}}</view>
   </button>
 </view>

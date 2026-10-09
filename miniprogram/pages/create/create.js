@@ -49,6 +49,10 @@ Page({
     wx.navigateTo({ url: '/pages/collect-create/collect-create' })
   },
 
+  goTodo() {
+    wx.navigateTo({ url: '/pages/todo-create/todo-create' })
+  },
+
   createVote() {
     const selected = this.data.slots.filter((s) => s.selected)
     if (!this.data.title.trim()) {

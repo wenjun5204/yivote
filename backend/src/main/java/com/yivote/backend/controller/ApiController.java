@@ -10,7 +10,11 @@ import com.yivote.backend.dto.CollectDtos.EntrySubmitRequest;
 import com.yivote.backend.dto.CollectDtos.ExportResponse;
 import com.yivote.backend.dto.CollectDtos.GroupCalendar;
 import com.yivote.backend.dto.CollectDtos.GroupProfile;
+import com.yivote.backend.dto.CollectDtos.CollectMineResponse;
 import com.yivote.backend.dto.CollectDtos.RenameRequest;
+import com.yivote.backend.dto.TodoDtos.TodoCreateRequest;
+import com.yivote.backend.dto.TodoDtos.TodoDetail;
+import com.yivote.backend.dto.TodoDtos.TodoMineResponse;
 import com.yivote.backend.dto.VoteDtos.BallotSubmitRequest;
 import com.yivote.backend.dto.VoteDtos.LockRequest;
 import com.yivote.backend.dto.VoteDtos.MineResponse;
@@ -19,9 +23,10 @@ import com.yivote.backend.dto.VoteDtos.VoteDetail;
 import com.yivote.backend.service.AuthService;
 import com.yivote.backend.service.CollectService;
 import com.yivote.backend.service.GroupService;
+import com.yivote.backend.service.TodoService;
 import com.yivote.backend.service.VoteService;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,13 +45,16 @@ public class ApiController {
     private final VoteService voteService;
     private final CollectService collectService;
     private final GroupService groupService;
+    private final TodoService todoService;
 
     public ApiController(AuthService authService, VoteService voteService,
-                         CollectService collectService, GroupService groupService) {
+                         CollectService collectService, GroupService groupService,
+                         TodoService todoService) {
         this.authService = authService;
         this.voteService = voteService;
         this.collectService = collectService;
         this.groupService = groupService;
+        this.todoService = todoService;
     }
 
     @GetMapping("/ping")
@@ -107,6 +115,48 @@ public class ApiController {
     @GetMapping("/collects/{collectId}/export")
     public ExportResponse exportCollect(@PathVariable Long collectId) {
         return collectService.export(collectId);
+    }
+
+    @GetMapping("/collects/mine")
+    public CollectMineResponse myCollects() {
+        CollectMineResponse response = new CollectMineResponse();
+        response.setItems(collectService.mine(CurrentUser.get()));
+        return response;
+    }
+
+    /* ---------------- 群待办(凑分工,PRD §7B) ---------------- */
+
+    @PostMapping("/todos")
+    public TodoDetail createTodo(@RequestBody TodoCreateRequest request) {
+        return todoService.create(request);
+    }
+
+    @GetMapping("/todos/{todoId}")
+    public TodoDetail getTodo(@PathVariable Long todoId,
+                               @RequestParam(required = false) String openGId) {
+        return todoService.detail(todoId, openGId, CurrentUser.get());
+    }
+
+    @PostMapping("/todos/{todoId}/items/{itemId}/claim")
+    public TodoDetail claimItem(@PathVariable Long todoId, @PathVariable Long itemId) {
+        return todoService.claim(todoId, itemId);
+    }
+
+    @PostMapping("/todos/{todoId}/items/{itemId}/release")
+    public TodoDetail releaseItem(@PathVariable Long todoId, @PathVariable Long itemId) {
+        return todoService.release(todoId, itemId);
+    }
+
+    @PostMapping("/todos/{todoId}/items/{itemId}/done")
+    public TodoDetail doneItem(@PathVariable Long todoId, @PathVariable Long itemId) {
+        return todoService.done(todoId, itemId);
+    }
+
+    @GetMapping("/todos/mine")
+    public TodoMineResponse myTodos() {
+        TodoMineResponse response = new TodoMineResponse();
+        response.setItems(todoService.mine(CurrentUser.get()));
+        return response;
     }
 
     /* ---------------- 群板 / 群日历(v1.3) ---------------- */

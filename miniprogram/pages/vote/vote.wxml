@@ -47,6 +47,11 @@
       <text class="cal-txt">这场已写进群日历，看看这个群还约过什么</text>
       <text class="arrow">›</text>
     </view>
+    <view wx:if="{{isOwner}}" class="cal-entry" bindtap="goTodo">
+      <text class="cal-ico">🤝</text>
+      <text class="cal-txt">接着给这顿分个工：谁订场、谁带球，点「我来」就认领</text>
+      <text class="arrow">›</text>
+    </view>
   </block>
 </view>
 <view class="page" wx:else>

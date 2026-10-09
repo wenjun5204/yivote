@@ -111,6 +111,16 @@ Page({
     wx.navigateTo({ url: '/pages/calendar/calendar?openGId=' + encodeURIComponent(this.openGId) })
   },
 
+  /** 定档页主入口(PRD §7B.2):活动标题自动带入,挂靠本投票 */
+  goTodo() {
+    const title = this.data.vote ? this.data.vote.title : ''
+    wx.navigateTo({
+      url: '/pages/todo-create/todo-create?voteId=' + this.voteId
+        + '&title=' + encodeURIComponent(title)
+        + (this.openGId ? '&openGId=' + encodeURIComponent(this.openGId) : ''),
+    })
+  },
+
   onShareAppMessage() {
     const v = this.data.vote || {}
     const locked = this.data.lockedLabel

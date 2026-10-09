@@ -1,0 +1,50 @@
+.page { padding: 28rpx 36rpx 280rpx; }
+.loading { text-align: center; color: #667067; padding: 200rpx 0; }
+.context { display: flex; align-items: center; gap: 18rpx; color: #667067; font-size: 24rpx; }
+.avatar { width: 54rpx; height: 54rpx; border-radius: 50%; background: #e8e4ff; color: #5943a6; display: flex; align-items: center; justify-content: center; font-weight: 800; }
+.vtitle { font-size: 46rpx; font-weight: 800; margin: 28rpx 0 20rpx; }
+
+.board { border: 2rpx solid #b7dbc2; border-radius: 28rpx; padding: 24rpx 28rpx; background: linear-gradient(120deg, #f2fbf4, #fffdf0); }
+.board-num { font-size: 30rpx; font-weight: 800; color: #0e5937; }
+.board-sub { margin-top: 8rpx; color: #667067; font-size: 24rpx; }
+
+.done-banner { display: flex; align-items: center; gap: 24rpx; margin-top: 24rpx; padding: 26rpx; border: 3rpx solid #d4b937; border-radius: 28rpx; background: linear-gradient(145deg, #fffceb, #fff); }
+.stamp { width: 100rpx; height: 100rpx; display: flex; align-items: center; justify-content: center; border: 5rpx solid #18794e; border-radius: 50%; color: #18794e; font-size: 48rpx; font-weight: 900; transform: rotate(-12deg); }
+.done-text { flex: 1; font-size: 30rpx; font-weight: 800; color: #172019; }
+
+/* 三态事项卡：空缺=虚线召唤 / 已认领=实名亮出 / 已完成=灰化打钩 */
+.todo-card { display: flex; align-items: center; gap: 20rpx; margin-top: 20rpx; padding: 24rpx; background: #fff; border: 3rpx solid #b7dbc2; border-radius: 26rpx; }
+.todo-card.open { border-style: dashed; border-color: #bfc9c0; }
+.todo-card.done { border-color: #dce3da; background: #f5f7f5; opacity: .74; }
+.todo-main { flex: 1; min-width: 0; }
+.todo-title-row { display: flex; align-items: center; gap: 12rpx; }
+.todo-title { font-size: 30rpx; font-weight: 800; }
+.cap-tag { background: #fff9d8; color: #5e5100; font-size: 20rpx; font-weight: 800; border-radius: 10rpx; padding: 4rpx 12rpx; }
+.claims { margin-top: 14rpx; }
+.claim-row { display: flex; align-items: center; gap: 10rpx; margin-top: 8rpx; font-size: 24rpx; }
+.claim-row.is-done { color: #667067; }
+.face { width: 40rpx; height: 40rpx; border-radius: 50%; background: #fce8d4; color: #a45017; display: inline-flex; align-items: center; justify-content: center; font-size: 18rpx; font-weight: 800; }
+.claim-name { font-weight: 700; }
+.claim-state { color: #0e5937; font-size: 20rpx; font-weight: 800; }
+.claim-row.is-done .claim-state { color: #667067; }
+.slots-left { margin-top: 12rpx; color: #c86414; font-size: 22rpx; }
+.todo-side { display: flex; flex-direction: column; gap: 12rpx; }
+.mini { margin: 0; padding: 12rpx 22rpx; border-radius: 14rpx; font-size: 24rpx; font-weight: 800; line-height: 1.4; border: 2rpx solid #dce3da; background: #fff; color: #0e5937; }
+.mini.claim { background: #18794e; color: #fff; border-color: #18794e; }
+.mini.done-btn { background: #e5f4e9; color: #0e5937; border-color: #94c8a3; }
+.mini.release { color: #c86414; }
+.check-mark { color: #18794e; font-size: 44rpx; font-weight: 900; text-align: center; }
+
+.note { margin-top: 24rpx; color: #667067; font-size: 22rpx; line-height: 1.7; }
+
+.main-btn {
+  position: fixed; left: 36rpx; right: 36rpx;
+  bottom: calc(140rpx + env(safe-area-inset-bottom));
+  background: #18794e; color: #fff; font-size: 34rpx; font-weight: 800; border-radius: 28rpx;
+  box-shadow: 0 16rpx 28rpx rgba(24, 121, 78, .22);
+}
+.btn-secondary { background: #fff; color: #0e5937; border: 3rpx solid #18794e; border-radius: 24rpx; font-size: 28rpx; font-weight: 700; margin: 0; }
+.fixed-secondary {
+  position: fixed; left: 36rpx; right: 36rpx;
+  bottom: calc(48rpx + env(safe-area-inset-bottom));
+}

@@ -4,6 +4,7 @@ import com.yivote.backend.common.ApiException;
 import com.yivote.backend.common.CurrentUser;
 import com.yivote.backend.dto.CollectDtos.CollectCreateRequest;
 import com.yivote.backend.dto.CollectDtos.CollectDetail;
+import com.yivote.backend.dto.CollectDtos.CollectSummary;
 import com.yivote.backend.dto.CollectDtos.EntryDetail;
 import com.yivote.backend.dto.CollectDtos.EntrySubmitRequest;
 import com.yivote.backend.dto.CollectDtos.ExportResponse;
@@ -166,6 +167,30 @@ public class CollectService {
         collect.setUpdatedAt(LocalDateTime.now());
         collectRepository.save(collect);
         return toDetail(collect, userId);
+    }
+
+    /** 我发起 + 我填过的收集(「我的事」聚合用) */
+    @Transactional(readOnly = true)
+    public List<CollectSummary> mine(Long userId) {
+        List<CollectSummary> result = new ArrayList<>();
+        for (CollectEntity collect : collectRepository.findAll()) {
+            boolean owner = collect.getOwnerId().equals(userId);
+            boolean filler = entryRepository.findByCollectIdAndUserId(collect.getId(), userId).isPresent();
+            if (!owner && !filler) {
+                continue;
+            }
+            CollectSummary summary = new CollectSummary();
+            summary.setCollectId(collect.getId());
+            summary.setTitle(collect.getTitle());
+            summary.setStatus(collect.getStatus());
+            summary.setMyRole(owner ? "OWNER" : "FILLER");
+            summary.setFilledCount(entryRepository.findByCollectIdOrderByUpdatedAtAsc(collect.getId()).size());
+            summary.setMyFilled(filler);
+            summary.setUpdatedAt(collect.getUpdatedAt());
+            result.add(summary);
+        }
+        result.sort((a, b) -> b.getUpdatedAt().compareTo(a.getUpdatedAt()));
+        return result;
     }
 
     /** 发起人复制汇总名单 */

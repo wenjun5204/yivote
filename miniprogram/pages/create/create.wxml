@@ -29,6 +29,15 @@
     </view>
     <text class="ce-arrow">›</text>
   </view>
+
+  <view class="collect-entry" bindtap="goTodo">
+    <text class="ce-ico">🤝</text>
+    <view class="ce-main">
+      <text class="ce-b">事定了？接着分个工</text>
+      <text class="ce-s">发起群待办：谁订场、谁带球、谁买水，点「我来」就认领</text>
+    </view>
+    <text class="ce-arrow">›</text>
+  </view>
 </view>
 
 <button class="create-btn" bindtap="createVote">创建并分享到群</button>

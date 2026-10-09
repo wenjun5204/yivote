@@ -14,12 +14,16 @@ import com.yivote.backend.dto.CollectDtos.FieldCreate;
 import com.yivote.backend.dto.CollectDtos.GroupCalendar;
 import com.yivote.backend.dto.CollectDtos.GroupProfile;
 import com.yivote.backend.dto.CollectDtos.RenameRequest;
+import com.yivote.backend.dto.TodoDtos.ItemCreate;
+import com.yivote.backend.dto.TodoDtos.TodoCreateRequest;
+import com.yivote.backend.dto.TodoDtos.TodoDetail;
 import com.yivote.backend.dto.VoteDtos.BallotSubmitRequest;
 import com.yivote.backend.dto.VoteDtos.VoteCreateRequest;
 import com.yivote.backend.dto.VoteDtos.VoteDetail;
 import com.yivote.backend.service.AuthService;
 import com.yivote.backend.service.CollectService;
 import com.yivote.backend.service.GroupService;
+import com.yivote.backend.service.TodoService;
 import com.yivote.backend.service.VoteService;
 import java.time.YearMonth;
 import java.util.List;
@@ -39,6 +43,8 @@ class GroupServiceTest {
     private CollectService collectService;
     @Autowired
     private GroupService groupService;
+    @Autowired
+    private TodoService todoService;
 
     @Test
     void profileAggregatesAndRenameShared() {
@@ -96,6 +102,50 @@ class GroupServiceTest {
     }
 
     @Test
+    void todoAggregatesIntoProfileAndCalendar() {
+        String gid = "og-todo-agg-" + System.nanoTime();
+        Long owner = login("todo-agg-owner-" + System.nanoTime());
+        Long member = login("todo-agg-member-" + System.nanoTime());
+
+        // 一场投票 + 挂在它下面的待办(定档页一键发起)+ 一张独立待办
+        VoteDetail vote = createVote(owner, gid, "球局");
+        CurrentUser.set(owner);
+        TodoCreateRequest linked = new TodoCreateRequest();
+        linked.setTitle("球局分工");
+        linked.setOpenGId(gid);
+        linked.setSourceType("VOTE");
+        linked.setSourceId(vote.getVoteId());
+        linked.setItems(List.of(todoItem("订场")));
+        todoService.create(linked);
+
+        TodoCreateRequest standalone = new TodoCreateRequest();
+        standalone.setTitle("聚餐分工");
+        standalone.setOpenGId(gid);
+        standalone.setItems(List.of(todoItem("定餐厅"), todoItem("买水")));
+        TodoDetail standaloneTodo = todoService.create(standalone);
+
+        // 群友认领,产生人次
+        CurrentUser.set(member);
+        Long itemId = standaloneTodo.getItems().get(0).getItemId();
+        todoService.claim(standaloneTodo.getTodoId(), itemId);
+
+        // 档案:投票 1 + 独立待办 1(挂在投票下的不重复计)= 2 场
+        GroupProfile profile = groupService.profile(gid);
+        assertEquals(2, profile.getActivityCount(), "挂靠待办不重复计场");
+
+        // 日历:投票卡点亮 todo 链路点;独立待办自己立卡
+        GroupCalendar calendar = groupService.calendar(gid, YearMonth.now().toString());
+        assertEquals(2, calendar.getActivities().size());
+        var voteActivity = calendar.getActivities().stream()
+                .filter(a -> "VOTE".equals(a.getKind())).findFirst().orElseThrow();
+        assertTrue(voteActivity.getChain().contains("todo"), "挂靠待办点亮投票的 todo 链路点");
+        var todoActivity = calendar.getActivities().stream()
+                .filter(a -> "TODO".equals(a.getKind())).findFirst().orElseThrow();
+        assertEquals(standaloneTodo.getTodoId(), todoActivity.getRefId());
+        assertEquals(1, todoActivity.getAttendeeCount(), "认领人次聚合");
+    }
+
+    @Test
     void detailOpensArchiveToGroupFirstComeFirstServed() {
         Long owner = login("arc-owner-" + System.nanoTime());
         Long member = login("arc-member-" + System.nanoTime());
@@ -120,6 +170,12 @@ class GroupServiceTest {
     }
 
     /* ---------------- helpers ---------------- */
+
+    private static ItemCreate todoItem(String title) {
+        ItemCreate create = new ItemCreate();
+        create.setTitle(title);
+        return create;
+    }
 
     private Long login(String code) {
         LoginRequest req = new LoginRequest();

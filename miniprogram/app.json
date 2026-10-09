@@ -6,6 +6,8 @@
     "pages/create/create",
     "pages/collect-create/collect-create",
     "pages/collect/collect",
+    "pages/todo-create/todo-create",
+    "pages/todo/todo",
     "pages/calendar/calendar"
   ],
   "window": {

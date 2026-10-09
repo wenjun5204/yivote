@@ -40,7 +40,7 @@
       <view class="event-date"><text>{{item.dayNum}}</text></view>
       <view class="event-main">
         <text class="event-title">{{item.title}}</text>
-        <text class="event-sub">{{item.attendeeCount}} 人参与 · {{item.kind === 'VOTE' ? '投票' : '收集'}}</text>
+        <text class="event-sub">{{item.attendeeCount}} 人参与 · {{item.kind === 'VOTE' ? '投票' : item.kind === 'COLLECT' ? '收集' : '待办'}}</text>
         <view class="badges">
           <text wx:for="{{item.chain}}" wx:for-item="c" wx:key="*this" class="badge">{{c === 'vote' ? '凑时间' : c === 'collect' ? '凑人头' : '凑分工'}}</text>
           <text wx:if="{{item.fullChain}}" class="badge full">满链</text>

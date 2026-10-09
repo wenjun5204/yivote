@@ -134,7 +134,7 @@ public final class CollectDtos {
     public static class CalendarActivity {
         private String date;          // yyyy-MM-dd
         private String title;
-        private String kind;          // VOTE / COLLECT
+        private String kind;          // VOTE / COLLECT / TODO
         private Long refId;
         private List<String> chain;
         private Integer attendeeCount;
@@ -167,5 +167,38 @@ public final class CollectDtos {
         public void setActivities(List<CalendarActivity> activities) { this.activities = activities; }
         public GroupProfile getProfile() { return profile; }
         public void setProfile(GroupProfile profile) { this.profile = profile; }
+    }
+
+    /** 「我的事」聚合用的收集列表项 */
+    public static class CollectSummary {
+        private Long collectId;
+        private String title;
+        private String status;
+        private String myRole;       // OWNER / FILLER / NONE
+        private Integer filledCount;
+        private Boolean myFilled;
+        private java.time.LocalDateTime updatedAt;
+
+        public Long getCollectId() { return collectId; }
+        public void setCollectId(Long collectId) { this.collectId = collectId; }
+        public String getTitle() { return title; }
+        public void setTitle(String title) { this.title = title; }
+        public String getStatus() { return status; }
+        public void setStatus(String status) { this.status = status; }
+        public String getMyRole() { return myRole; }
+        public void setMyRole(String myRole) { this.myRole = myRole; }
+        public Integer getFilledCount() { return filledCount; }
+        public void setFilledCount(Integer filledCount) { this.filledCount = filledCount; }
+        public Boolean getMyFilled() { return myFilled; }
+        public void setMyFilled(Boolean myFilled) { this.myFilled = myFilled; }
+        public java.time.LocalDateTime getUpdatedAt() { return updatedAt; }
+        public void setUpdatedAt(java.time.LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    }
+
+    public static class CollectMineResponse {
+        private List<CollectSummary> items;
+
+        public List<CollectSummary> getItems() { return items; }
+        public void setItems(List<CollectSummary> items) { this.items = items; }
     }
 }

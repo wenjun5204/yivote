@@ -100,7 +100,9 @@ Page({
     const { kind, ref } = e.currentTarget.dataset
     const url = kind === 'VOTE'
       ? '/pages/vote/vote?voteId=' + ref
-      : '/pages/collect/collect?collectId=' + ref
+      : kind === 'COLLECT'
+        ? '/pages/collect/collect?collectId=' + ref
+        : '/pages/todo/todo?todoId=' + ref
     wx.navigateTo({ url })
   },
 

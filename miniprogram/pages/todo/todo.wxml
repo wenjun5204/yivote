@@ -1,0 +1,55 @@
+<!-- 待办详情：看板汇总 + 三态事项卡（空缺/已认领/已完成，PRD §7B.3） -->
+<view class="page" wx:if="{{todo}}">
+  <view class="context">
+    <view class="avatar">{{todo.owner.nickname[0] || '友'}}</view>
+    <text>{{todo.owner.nickname}}发起</text>
+  </view>
+  <view class="vtitle">{{todo.title}}</view>
+
+  <view class="board">
+    <view class="board-num">{{todo.summary.total}} 个事项</view>
+    <view class="board-sub">已认领 {{todo.summary.claimed}} · 已完成 {{todo.summary.done}} · 空缺 {{todo.summary.open}}</view>
+  </view>
+
+  <view wx:if="{{todo.status === 'DONE'}}" class="done-banner">
+    <view class="stamp">成</view>
+    <view class="done-text">{{todo.summary.total}} 件事全办成了，这场稳了</view>
+  </view>
+
+  <view class="todo-card {{item.state === 'OPEN' ? 'open' : ''}} {{item.state === 'DONE' ? 'done' : ''}}"
+    wx:for="{{todo.items}}" wx:key="itemId">
+    <view class="todo-main">
+      <view class="todo-title-row">
+        <text class="todo-title">{{item.title}}</text>
+        <text wx:if="{{item.capacity > 1}}" class="cap-tag">可 {{item.capacity}} 人</text>
+      </view>
+      <view class="claims" wx:if="{{item.claims.length}}">
+        <view class="claim-row {{claim.done ? 'is-done' : ''}}" wx:for="{{item.claims}}" wx:for-item="claim" wx:key="claim.user.userId">
+          <text class="face">{{claim.user.nickname[0]}}</text>
+          <text class="claim-name">{{claim.user.nickname}}</text>
+          <text class="claim-state">{{claim.done ? '已搞定' : '已认领'}}</text>
+        </view>
+      </view>
+      <view wx:if="{{item.state === 'CLAIMED' && item.slotsLeft > 0}}" class="slots-left">还差 {{item.slotsLeft}} 人，位置给你留着</view>
+    </view>
+
+    <!-- 三态动作：空缺=我来 / 我认领未搞定=搞定了+转给别人 / 已搞定=无动作（不许悄悄消失） -->
+    <view class="todo-side">
+      <button wx:if="{{item.state !== 'DONE' && !item.myClaimed && item.slotsLeft > 0}}"
+        class="mini claim" data-id="{{item.itemId}}" bindtap="claim">我来</button>
+      <button wx:if="{{item.myClaimed && !item.myDone}}"
+        class="mini done-btn" data-id="{{item.itemId}}" bindtap="done">搞定了</button>
+      <button wx:if="{{item.myClaimed && !item.myDone}}"
+        class="mini release" data-id="{{item.itemId}}" bindtap="release">转给别人</button>
+      <text wx:if="{{item.state === 'DONE'}}" class="check-mark">✓</text>
+    </view>
+  </view>
+
+  <view class="note">认领的事随时能转给别人；搞定了就别放回啦，让大家看到你办成了</view>
+</view>
+<view class="page" wx:else>
+  <view class="loading">正在打开待办…</view>
+</view>
+
+<button wx:if="{{todo}}" class="main-btn" open-type="share">把待办卡片发到群里</button>
+<button wx:if="{{todo && isOwner && todo.status === 'OPEN'}}" class="btn-secondary fixed-secondary" bindtap="nudge">复制话术，喊人搭把手</button>

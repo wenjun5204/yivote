@@ -9,11 +9,15 @@ import com.yivote.backend.dto.CollectDtos.RenameRequest;
 import com.yivote.backend.entity.BallotEntity;
 import com.yivote.backend.entity.CollectEntity;
 import com.yivote.backend.entity.GroupProfileEntity;
+import com.yivote.backend.entity.TodoClaimEntity;
+import com.yivote.backend.entity.TodoEntity;
 import com.yivote.backend.entity.VoteEntity;
 import com.yivote.backend.repository.BallotRepository;
 import com.yivote.backend.repository.CollectEntryRepository;
 import com.yivote.backend.repository.CollectRepository;
 import com.yivote.backend.repository.GroupProfileRepository;
+import com.yivote.backend.repository.TodoClaimRepository;
+import com.yivote.backend.repository.TodoRepository;
 import com.yivote.backend.repository.VoteRepository;
 import com.yivote.backend.repository.VoteSlotRepository;
 import java.time.LocalDate;
@@ -40,19 +44,25 @@ public class GroupService {
     private final BallotRepository ballotRepository;
     private final CollectEntryRepository entryRepository;
     private final VoteSlotRepository slotRepository;
+    private final TodoRepository todoRepository;
+    private final TodoClaimRepository todoClaimRepository;
 
     public GroupService(GroupProfileRepository profileRepository,
                         VoteRepository voteRepository,
                         CollectRepository collectRepository,
                         BallotRepository ballotRepository,
                         CollectEntryRepository entryRepository,
-                        VoteSlotRepository slotRepository) {
+                        VoteSlotRepository slotRepository,
+                        TodoRepository todoRepository,
+                        TodoClaimRepository todoClaimRepository) {
         this.profileRepository = profileRepository;
         this.voteRepository = voteRepository;
         this.collectRepository = collectRepository;
         this.ballotRepository = ballotRepository;
         this.entryRepository = entryRepository;
         this.slotRepository = slotRepository;
+        this.todoRepository = todoRepository;
+        this.todoClaimRepository = todoClaimRepository;
     }
 
     /** 群档案(不存在则返回默认,不懒建——避免任意 openGId 刷行) */
@@ -61,7 +71,8 @@ public class GroupService {
         requireGid(openGId);
         List<VoteEntity> votes = voteRepository.findByOpenGId(openGId);
         List<CollectEntity> collects = collectRepository.findByOpenGIdOrderByUpdatedAtDesc(openGId);
-        return buildProfile(openGId, votes, collects);
+        List<TodoEntity> todos = todosOf(openGId);
+        return buildProfile(openGId, votes, collects, todos);
     }
 
     @Transactional
@@ -85,7 +96,8 @@ public class GroupService {
 
         List<VoteEntity> votes = voteRepository.findByOpenGId(openGId);
         List<CollectEntity> collects = collectRepository.findByOpenGIdOrderByUpdatedAtDesc(openGId);
-        GroupProfile result = buildProfile(openGId, votes, collects);
+        List<TodoEntity> todos = todosOf(openGId);
+        GroupProfile result = buildProfile(openGId, votes, collects, todos);
         result.setName(name);
         return result;
     }
@@ -98,10 +110,11 @@ public class GroupService {
 
         List<VoteEntity> votes = voteRepository.findByOpenGId(openGId);
         List<CollectEntity> collects = collectRepository.findByOpenGIdOrderByUpdatedAtDesc(openGId);
+        List<TodoEntity> todos = todosOf(openGId);
 
         GroupCalendar calendar = new GroupCalendar();
         calendar.setMonth(ym.toString());
-        calendar.setProfile(buildProfile(openGId, votes, collects));
+        calendar.setProfile(buildProfile(openGId, votes, collects, todos));
 
         List<CalendarActivity> activities = new ArrayList<>();
         for (VoteEntity vote : votes) {
@@ -115,7 +128,10 @@ public class GroupService {
             activity.setKind("VOTE");
             activity.setRefId(vote.getId());
             activity.setAttendeeCount(countVoters(vote.getId()));
-            activity.setChain(List.of("vote"));
+            // 链路小点:投票下挂着待办(定档页一键发起的分工)则点亮 todo
+            boolean hasTodo = todos.stream().anyMatch(t ->
+                    vote.getId().equals(t.getSourceId()) && "VOTE".equals(t.getSourceType()));
+            activity.setChain(hasTodo ? List.of("vote", "todo") : List.of("vote"));
             activity.setFullChain(false);
             activities.add(activity);
         }
@@ -134,6 +150,25 @@ public class GroupService {
             activity.setFullChain(false);
             activities.add(activity);
         }
+        // 独立待办是自己的活动;挂在投票下的不另立卡(体现为投票卡的 todo 小点)
+        for (TodoEntity todo : todos) {
+            if (todo.getSourceType() != null) {
+                continue;
+            }
+            LocalDate date = activityDate(todo.getUpdatedAt());
+            if (date == null || !YearMonth.from(date).equals(ym)) {
+                continue;
+            }
+            CalendarActivity activity = new CalendarActivity();
+            activity.setDate(date.toString());
+            activity.setTitle(todo.getTitle());
+            activity.setKind("TODO");
+            activity.setRefId(todo.getId());
+            activity.setAttendeeCount(countClaimants(todo.getId()));
+            activity.setChain(List.of("todo"));
+            activity.setFullChain(false);
+            activities.add(activity);
+        }
         activities.sort((a, b) -> a.getDate().compareTo(b.getDate()));
         calendar.setActivities(activities);
         return calendar;
@@ -141,12 +176,15 @@ public class GroupService {
 
     /* ---------------- 汇总 ---------------- */
 
-    private GroupProfile buildProfile(String openGId, List<VoteEntity> votes, List<CollectEntity> collects) {
+    private GroupProfile buildProfile(String openGId, List<VoteEntity> votes,
+                                      List<CollectEntity> collects, List<TodoEntity> todos) {
         GroupProfile profile = new GroupProfile();
         profile.setOpenGId(openGId);
         profile.setName(profileRepository.findByOpenGId(openGId)
                 .map(GroupProfileEntity::getName).orElse(DEFAULT_NAME));
-        profile.setActivityCount(votes.size() + collects.size());
+        // 场活动数:投票 + 收集 + 独立待办;挂在投票下的待办不重复计
+        long standaloneTodos = todos.stream().filter(t -> t.getSourceType() == null).count();
+        profile.setActivityCount((int) (votes.size() + collects.size() + standaloneTodos));
 
         int attendeeTotal = 0;
         for (VoteEntity vote : votes) {
@@ -155,12 +193,28 @@ public class GroupService {
         for (CollectEntity collect : collects) {
             attendeeTotal += entryRepository.findByCollectIdOrderByUpdatedAtAsc(collect.getId()).size();
         }
+        for (TodoEntity todo : todos) {
+            attendeeTotal += countClaimants(todo.getId());
+        }
         profile.setAttendeeTotal(attendeeTotal);
 
         // 凝聚力分(简化公式,只升不降):活动×10 + 人次×1,封顶 100
         int score = Math.min(100, profile.getActivityCount() * 10 + attendeeTotal);
         profile.setCohesionScore(score);
         return profile;
+    }
+
+    /** 群下的待办(含挂在投票下的——用于链路小点) */
+    private List<TodoEntity> todosOf(String openGId) {
+        return todoRepository.findByOpenGIdOrderByUpdatedAtDesc(openGId);
+    }
+
+    private int countClaimants(Long todoId) {
+        Set<Long> ids = new HashSet<>();
+        for (TodoClaimEntity c : todoClaimRepository.findByTodoIdOrderByCreatedAtAsc(todoId)) {
+            ids.add(c.getUserId());
+        }
+        return ids.size();
     }
 
     private int countVoters(Long voteId) {
