@@ -18,7 +18,7 @@ yivote/
 
 1. 改接口先改 `api/openapi.yaml`，再走 Stage 2 checkpoint
 2. 契约校验：`python3 lib/contract/cli.py verify api/openapi.yaml --stack java`（在 fe-be-contract-harness 仓）
-3. 后端本地跑：`cd backend && ./mvnw spring-boot:run`（H2，端口 8080）
+3. 后端本地跑：`cd backend && ./mvnw spring-boot:run`（H2，端口 8080）——详见 [backend/README.md](../backend/README.md)（前端友好的后端调试/部署指南）
 4. 小程序联调：开发者工具导入 `miniprogram/`，勾选「不校验合法域名」（USE_CLOUD=false）
 5. 部署：微信云托管（新 AppID 新环境），Dockerfile 已就位；`contract cli live` 契约校验
 
