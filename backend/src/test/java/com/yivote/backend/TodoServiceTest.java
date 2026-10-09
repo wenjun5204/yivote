@@ -205,4 +205,52 @@ class TodoServiceTest {
                         .noneMatch(s -> s.getTodoId().equals(created.getTodoId())),
                 "没参与过的不出现");
     }
+
+    @Test
+    void groupTodosOnlyOpenWithMyRole() {
+        // 同群建两场:一场进行中,一场全部搞定收口
+        String gid = "og-group-" + System.nanoTime();
+        CurrentUser.set(ownerId);
+        TodoCreateRequest openReq = new TodoCreateRequest();
+        openReq.setTitle("周六球局");
+        openReq.setOpenGId(gid);
+        openReq.setItems(List.of(item("订场", 1), item("带球", 1)));
+        TodoDetail open = todoService.create(openReq);
+
+        TodoCreateRequest closedReq = new TodoCreateRequest();
+        closedReq.setTitle("火锅局");
+        closedReq.setOpenGId(gid);
+        closedReq.setItems(List.of(item("订位", 1)));
+        TodoDetail closed = todoService.create(closedReq);
+        CurrentUser.set(memberA);
+        Long seatId = closed.getItems().get(0).getItemId();
+        todoService.claim(closed.getTodoId(), seatId);
+        todoService.done(closed.getTodoId(), seatId);
+
+        // memberA 认领进行中那场的「带球」
+        Long ballId = open.getItems().get(1).getItemId();
+        todoService.claim(open.getTodoId(), ballId);
+
+        // 群板视角:只看到 OPEN 的;myRole 发起人=OWNER,认领人=CLAIMER,路人=NONE
+        CurrentUser.set(ownerId);
+        List<TodoSummary> asOwner = todoService.groupTodos(gid, ownerId);
+        assertTrue(asOwner.stream().noneMatch(s -> s.getTodoId().equals(closed.getTodoId())),
+                "DONE 的已沉淀进群日历,群板不显示");
+        assertEquals("OWNER", asOwner.stream()
+                .filter(s -> s.getTodoId().equals(open.getTodoId()))
+                .findFirst().orElseThrow().getMyRole());
+
+        CurrentUser.set(memberA);
+        List<TodoSummary> asClaimer = todoService.groupTodos(gid, memberA);
+        assertEquals("CLAIMER", asClaimer.stream()
+                .filter(s -> s.getTodoId().equals(open.getTodoId()))
+                .findFirst().orElseThrow().getMyRole());
+
+        CurrentUser.set(memberB);
+        List<TodoSummary> asPasser = todoService.groupTodos(gid, memberB);
+        assertEquals("NONE", asPasser.stream()
+                .filter(s -> s.getTodoId().equals(open.getTodoId()))
+                .findFirst().orElseThrow().getMyRole(),
+                "纯路过的群友 myRole=NONE");
+    }
 }

@@ -8,6 +8,16 @@
 .stat .n { display: block; font-size: 36rpx; font-weight: 800; color: #0e5937; }
 .stat .t { display: block; font-size: 20rpx; color: #667067; margin-top: 4rpx; }
 .menu { display: flex; align-items: center; gap: 22rpx; background: #fff; border: 2rpx solid #dce3da; border-radius: 28rpx; margin: 24rpx 32rpx 0; padding: 28rpx; }
+.menu-block { margin: 24rpx 32rpx 0; }
+.menu-block .menu { margin: 0; border-radius: 28rpx 28rpx 0 0; }
+.menu-btn { text-align: left; line-height: 1.4; }
+/* button 原生样式重置,观感与 view 版 menu 一致 */
+.menu-btn { margin: 24rpx 32rpx 0; width: auto; font-size: 30rpx; color: #172019; }
+.menu-btn::after { border: 0; }
+.todo-list { background: #fff; border: 2rpx solid #dce3da; border-top: 0; border-radius: 0 0 28rpx 28rpx; }
+.todo-row { padding: 24rpx 28rpx; border-top: 1rpx solid #f0f3ef; }
+.todo-title { display: block; font-size: 28rpx; font-weight: 700; }
+.todo-sub { display: block; font-size: 22rpx; color: #667067; margin-top: 6rpx; }
 .mi { font-size: 40rpx; }
 .mm { flex: 1; }
 .mm .b { display: block; font-size: 30rpx; font-weight: 700; }

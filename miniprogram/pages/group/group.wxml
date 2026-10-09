@@ -1,4 +1,4 @@
-<!-- 群 tab：最近进过的群的协作档案（数据：/api/groups/{openGId}） -->
+<!-- 群 tab：最近进过的群的协作档案（数据：/api/groups/{openGId} + /api/groups/{openGId}/todos） -->
 <view class="page" wx:if="{{state === 'loaded'}}">
   <view class="gh">
     <view class="eyebrow">群成员共同维护的协作档案</view>
@@ -13,9 +13,28 @@
   <view class="menu" bindtap="onMenu" data-k="calendar">
     <text class="mi">📅</text><view class="mm"><text class="b">群日历</text><text class="s">这个群一起张罗过的日子</text></view><text class="arrow">›</text>
   </view>
-  <view class="menu" bindtap="onMenu" data-k="history">
-    <text class="mi">🗂️</text><view class="mm"><text class="b">历史活动</text><text class="s">报过的名、分过的工，都在这里</text></view><text class="arrow">›</text>
+
+  <!-- 进行中的分工:本群 OPEN 待办列表(内联展开) -->
+  <view class="menu-block">
+    <view class="menu menu-tight">
+      <text class="mi">✅</text>
+      <view class="mm">
+        <text class="b">进行中的分工</text>
+        <text class="s" wx:if="{{todos.length}}">{{todos[0].title}} · 还空着 {{openTotal}} 件事</text>
+        <text class="s" wx:else>这个群眼下的分工都办完啦</text>
+      </view>
+    </view>
+    <view wx:if="{{todos.length}}" class="todo-list">
+      <view class="todo-row" wx:for="{{todos}}" wx:key="todoId" data-id="{{item.todoId}}" bindtap="openTodo">
+        <text class="todo-title">{{item.title}}</text>
+        <text class="todo-sub">{{item.summary.done}}/{{item.summary.total}} 件事搞定 · 搭把手</text>
+      </view>
+    </view>
   </view>
+
+  <button class="menu menu-btn" open-type="share">
+    <text class="mi">🏅</text><view class="mm"><text class="b">把群战功发到群里</text><text class="s">月底或年底，回顾大家一起办成的事</text></view><text class="arrow">›</text>
+  </button>
   <view class="menu" bindtap="onMenu" data-k="rename">
     <text class="mi">✏️</text><view class="mm"><text class="b">群名备注</text><text class="s">成员共编，谁来都能改</text></view><text class="arrow">›</text>
   </view>
@@ -25,7 +44,7 @@
   <view class="empty-ico">👥</view>
   <view class="empty-h">还没有进过群的卡片</view>
   <view class="empty-p">从群里点开一张投票或收集的卡片，这个群的日历、历史和凝聚力分会在这里长出来。</view>
-  <view class="empty-p">先去「发起」tab 建一个，发到群里试试。</view>
+  <view class="empty-p">也可以先在「我的事」里发起一场，发到群里试试。</view>
 </view>
 
 <view class="page" wx:else>

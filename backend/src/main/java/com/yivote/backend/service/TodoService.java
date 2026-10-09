@@ -237,6 +237,15 @@ public class TodoService {
                 .toList();
     }
 
+    /** 群板「进行中的分工」:本群 OPEN 状态的待办(群板 tab 数据源;DONE 的已沉淀进群日历) */
+    @Transactional(readOnly = true)
+    public List<TodoSummary> groupTodos(String openGId, Long userId) {
+        return todoRepository.findByOpenGIdOrderByUpdatedAtDesc(trimToNull(openGId)).stream()
+                .filter(todo -> "OPEN".equals(todo.getStatus()))
+                .map(todo -> toSummary(todo, userId))
+                .toList();
+    }
+
     /* ---------------- 汇总 ---------------- */
 
     private TodoDetail toDetail(TodoEntity todo, Long userId) {
@@ -313,13 +322,23 @@ public class TodoService {
         summary.setTodoId(todo.getId());
         summary.setTitle(todo.getTitle());
         summary.setStatus(todo.getStatus());
-        summary.setMyRole(todo.getOwnerId().equals(userId) ? "OWNER" : "CLAIMER");
+        summary.setMyRole(todo.getOwnerId().equals(userId) ? "OWNER" : myRoleOf(todo.getId(), userId));
         summary.setUpdatedAt(todo.getUpdatedAt());
 
         // 汇总数字复用 toDetail 的推导(量级小,直接算)
         TodoDetail detail = toDetail(todo, userId);
         summary.setSummary(detail.getSummary());
         return summary;
+    }
+
+    /** 非发起人:认领过 = CLAIMER;纯路过(群板视角) = NONE */
+    private String myRoleOf(Long todoId, Long userId) {
+        for (TodoClaimEntity claim : claimRepository.findByTodoIdOrderByCreatedAtAsc(todoId)) {
+            if (claim.getUserId().equals(userId)) {
+                return "CLAIMER";
+            }
+        }
+        return "NONE";
     }
 
     private boolean allDone(Long todoId) {

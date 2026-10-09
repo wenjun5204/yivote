@@ -4,9 +4,10 @@
 .avatar { width: 54rpx; height: 54rpx; border-radius: 50%; background: #e8e4ff; color: #5943a6; display: flex; align-items: center; justify-content: center; font-weight: 800; }
 .vtitle { font-size: 46rpx; font-weight: 800; margin: 28rpx 0 20rpx; }
 
-.board { border: 2rpx solid #b7dbc2; border-radius: 28rpx; padding: 24rpx 28rpx; background: linear-gradient(120deg, #f2fbf4, #fffdf0); }
-.board-num { font-size: 30rpx; font-weight: 800; color: #0e5937; }
-.board-sub { margin-top: 8rpx; color: #667067; font-size: 24rpx; }
+.board { border: 2rpx solid #b7dbc2; border-radius: 28rpx; padding: 24rpx 28rpx; background: linear-gradient(120deg, #f2fbf4, #fffdf0); font-size: 26rpx; }
+.board-top { display: flex; justify-content: space-between; }
+.board-strong { color: #0e5937; font-weight: 800; }
+.board-ok { color: #0e5937; font-weight: 700; }
 
 .done-banner { display: flex; align-items: center; gap: 24rpx; margin-top: 24rpx; padding: 26rpx; border: 3rpx solid #d4b937; border-radius: 28rpx; background: linear-gradient(145deg, #fffceb, #fff); }
 .stamp { width: 100rpx; height: 100rpx; display: flex; align-items: center; justify-content: center; border: 5rpx solid #18794e; border-radius: 50%; color: #18794e; font-size: 48rpx; font-weight: 900; transform: rotate(-12deg); }

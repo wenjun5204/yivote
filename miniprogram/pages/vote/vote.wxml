@@ -28,28 +28,34 @@
       </view>
     </view>
 
-    <view class="tips">选完点下面按钮就记上了，截止前随时能改</view>
+    <!-- 提交后 feedback 卡:已记下您的时间,档期变了随时改 -->
+    <view wx:if="{{submitted}}" class="feedback">
+      <text class="feedback-check">✓</text>
+      <text>已记下您的时间：{{feedbackLabels}}。档期变了可以随时修改。</text>
+    </view>
+    <view wx:else class="tips">选完点下面按钮就记上了，截止前随时能改</view>
   </block>
 
   <block wx:else>
-    <view class="locked-banner">
+    <!-- 已定档:对照原型 result 屏(stamp 定 + 到场名单 + 双 CTA 在底部) -->
+    <view class="result">
       <view class="stamp">定</view>
-      <view class="locked-text">已定档：{{lockedLabel}} · 到场 {{lockedCount}} 人</view>
+      <view class="result-h">这场定了！</view>
+      <view class="result-p">{{lockedLabel}} · {{vote.owner.nickname}}组织\n一起把这场张罗成。</view>
     </view>
-    <view class="roster">
-      <view class="person" wx:for="{{lockedVoters}}" wx:key="userId">
-        <text class="face big">{{item.nickname[0]}}</text>
-        <text>{{item.nickname}}</text>
+    <view class="roster-card">
+      <view class="roster-head">到场名单 · {{lockedCount}} 人</view>
+      <view class="roster">
+        <view class="person" wx:for="{{lockedVoters}}" wx:key="userId">
+          <text class="face big">{{item.nickname[0]}}</text>
+          <text>{{item.nickname}}</text>
+        </view>
       </view>
+      <view class="roster-note">这份名单会留在活动里，接下来可以直接分工。</view>
     </view>
     <view wx:if="{{fromGid}}" class="cal-entry" bindtap="goCalendar">
       <text class="cal-ico">📅</text>
       <text class="cal-txt">这场已写进群日历，看看这个群还约过什么</text>
-      <text class="arrow">›</text>
-    </view>
-    <view wx:if="{{isOwner}}" class="cal-entry" bindtap="goTodo">
-      <text class="cal-ico">🤝</text>
-      <text class="cal-txt">接着给这顿分个工：谁订场、谁带球，点「我来」就认领</text>
       <text class="arrow">›</text>
     </view>
   </block>
@@ -58,8 +64,21 @@
   <view class="loading">正在打开投票…</view>
 </view>
 
-<button wx:if="{{vote && vote.status === 'OPEN' && !isOwner}}" class="main-btn" disabled="{{!picked.length}}" bindtap="submit">
-  {{submitted ? '改一下我的时间' : '就这些时间我有空'}}
+<!-- 群友视角:提交前=确认按钮 / 提交后=改投 -->
+<button wx:if="{{vote && vote.status === 'OPEN' && !isOwner && !submitted}}" class="main-btn" disabled="{{!picked.length}}" bindtap="submit">
+  就这些时间我有空
 </button>
-<button wx:if="{{vote && vote.status === 'OPEN' && isOwner}}" class="main-btn ghost" bindtap="lockBest">就定人数最多的时间</button>
-<button wx:if="{{vote && vote.status === 'LOCKED'}}" class="main-btn ghost" bindtap="shareResult">把结果卡片发回群里</button>
+<button wx:if="{{vote && vote.status === 'OPEN' && !isOwner && submitted}}" class="main-btn ghost" bindtap="editVote">
+  改一下我的时间
+</button>
+<!-- 组织者视角:进定档确认页(最优时段 + 到场名单) -->
+<button wx:if="{{vote && vote.status === 'OPEN' && isOwner}}" class="main-btn" bindtap="goDecision">
+  定 {{bestLabel}}
+</button>
+<!-- 已定档:结果卡转发(官方 open-type=share) + 用名单分个工 -->
+<button wx:if="{{vote && vote.status === 'LOCKED'}}" class="main-btn" open-type="share">
+  把定档结果发到群里
+</button>
+<button wx:if="{{vote && vote.status === 'LOCKED' && isOwner}}" class="main-btn ghost second-cta" bindtap="goTodo">
+  用这份名单分个工
+</button>

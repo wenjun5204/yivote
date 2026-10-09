@@ -23,11 +23,17 @@
 .face.big { width: 56rpx; height: 56rpx; font-size: 26rpx; margin-right: 0; }
 .more { font-size: 22rpx; color: #667067; margin-left: 16rpx; }
 .tips { text-align: center; color: #667067; font-size: 22rpx; margin-top: 28rpx; }
-.locked-banner { display: flex; align-items: center; gap: 30rpx; margin-top: 32rpx; }
-.stamp { width: 120rpx; height: 120rpx; border: 8rpx solid #c2463c; border-radius: 50%; color: #c2463c; font-size: 64rpx; font-weight: 900; display: flex; align-items: center; justify-content: center; transform: rotate(-12deg); }
-.locked-text { font-size: 30rpx; font-weight: 700; }
-.roster { display: flex; flex-wrap: wrap; gap: 14rpx; margin-top: 30rpx; }
+.feedback { display: flex; gap: 18rpx; margin-top: 28rpx; padding: 24rpx; border-radius: 26rpx; background: #e5f4e9; color: #155136; font-size: 26rpx; line-height: 1.6; }
+.feedback-check { font-weight: 900; }
+.result { text-align: center; margin-top: 40rpx; }
+.stamp { width: 188rpx; height: 188rpx; border: 8rpx solid #18794e; border-radius: 50%; color: #18794e; font-size: 76rpx; font-weight: 900; display: flex; align-items: center; justify-content: center; transform: rotate(-12deg); margin: 12rpx auto 36rpx; }
+.result-h { font-size: 52rpx; font-weight: 800; }
+.result-p { font-size: 26rpx; color: #667067; margin-top: 18rpx; line-height: 1.7; }
+.roster-card { margin-top: 36rpx; padding: 28rpx; background: #fbfdfb; border: 2rpx solid #dce3da; border-radius: 28rpx; }
+.roster-head { font-size: 28rpx; font-weight: 700; }
+.roster { display: flex; flex-wrap: wrap; gap: 14rpx; margin-top: 20rpx; }
 .person { display: flex; align-items: center; gap: 10rpx; background: #fff; border: 2rpx solid #dce3da; border-radius: 99rpx; padding: 8rpx 20rpx 8rpx 8rpx; font-size: 24rpx; }
+.roster-note { font-size: 22rpx; color: #667067; margin-top: 20rpx; }
 .main-btn {
   position: fixed; left: 36rpx; right: 36rpx;
   bottom: calc(48rpx + env(safe-area-inset-bottom));
@@ -36,6 +42,8 @@
 }
 .main-btn[disabled] { background: #e4e9e4; color: #94a098; box-shadow: none; }
 .main-btn.ghost { background: #fff; color: #0e5937; border: 3rpx solid #18794e; box-shadow: none; }
+/* 双 CTA:次要按钮叠在主按钮上方 */
+.main-btn.second-cta { bottom: calc(148rpx + env(safe-area-inset-bottom)); }
 .cal-entry { display: flex; align-items: center; gap: 18rpx; background: #fff; border: 2rpx solid #dce3da; border-radius: 28rpx; margin-top: 30rpx; padding: 26rpx 28rpx; }
 .cal-ico { font-size: 38rpx; }
 .cal-txt { flex: 1; font-size: 26rpx; color: #172019; font-weight: 600; }

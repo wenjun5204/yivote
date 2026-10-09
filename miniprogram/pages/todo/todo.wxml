@@ -7,8 +7,11 @@
   <view class="vtitle">{{todo.title}}</view>
 
   <view class="board">
-    <view class="board-num">{{todo.summary.total}} 个事项</view>
-    <view class="board-sub">已认领 {{todo.summary.claimed}} · 已完成 {{todo.summary.done}} · 空缺 {{todo.summary.open}}</view>
+    <view class="board-top">
+      <text>共 <text class="board-strong">{{todo.summary.total}}</text> 件 · 已认领 <text class="board-strong">{{todo.summary.claimed}}</text></text>
+      <text wx:if="{{todo.summary.open > 0}}">还空着 <text class="board-strong">{{todo.summary.open}}</text> 件</text>
+      <text wx:else class="board-ok">每件事都有着落</text>
+    </view>
   </view>
 
   <view wx:if="{{todo.status === 'DONE'}}" class="done-banner">

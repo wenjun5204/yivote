@@ -6,12 +6,12 @@
 
 ```
 yivote/
-├── miniprogram/   # 微信小程序（原生框架 + 官方组件；三 tab：我的事/发起/群板）
+├── miniprogram/   # 微信小程序（原生框架 + 官方组件；三 tab：我的事/群板/我的，发起从首页 hero 进入）
 ├── backend/       # Spring Boot + Java 21（包名 com.yivote.backend；云托管部署同 fe_backend_mini 链路）
 ├── api/openapi.yaml  # 前后端契约 SSOT（fe-be-contract-harness 驱动）
 └── docs/
     ├── PRD-咦投票.md          # v1.4 定稿（唯一版本）
-    └── prototype/index.html   # 交互原型 v1（绿色纸面系，定稿基底）
+    └── prototype/             # 交互原型（index.html v1 定稿基底；index-optimized.html 为小程序对齐的交互 SSOT）
 ```
 
 ## 开发流程（fe-be-contract-harness 契约驱动）

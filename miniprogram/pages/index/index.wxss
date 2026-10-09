@@ -24,6 +24,27 @@
   font-weight: 700;
 }
 .section-head .sub { font-size: 22rpx; color: #667067; font-weight: 400; }
+.chain {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6rpx;
+  padding: 24rpx 16rpx;
+  background: #fff;
+  border: 1rpx solid #dce3da;
+  border-radius: 30rpx;
+}
+.chain-btn {
+  padding: 10rpx 2rpx;
+  background: transparent;
+  line-height: 1.5;
+  font-size: 20rpx;
+  color: #667067;
+  border: 0;
+}
+.chain-btn::after { border: 0; }
+.chain-btn .ico { display: block; font-size: 38rpx; }
+.chain-btn .lbl { display: block; color: #172019; font-size: 22rpx; margin-top: 4rpx; }
+.chain-btn.active .lbl { color: #0e5937; font-weight: 700; }
 .empty { text-align: center; color: #667067; font-size: 26rpx; padding: 60rpx 0; }
 .activity {
   display: flex;

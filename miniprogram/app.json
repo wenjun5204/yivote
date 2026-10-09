@@ -2,13 +2,15 @@
   "pages": [
     "pages/index/index",
     "pages/group/group",
+    "pages/me/me",
     "pages/vote/vote",
     "pages/create/create",
     "pages/collect-create/collect-create",
     "pages/collect/collect",
     "pages/todo-create/todo-create",
     "pages/todo/todo",
-    "pages/calendar/calendar"
+    "pages/calendar/calendar",
+    "pages/decision/decision"
   ],
   "window": {
     "navigationBarTitleText": "咦投票",
@@ -27,12 +29,12 @@
         "text": "我的事"
       },
       {
-        "pagePath": "pages/create/create",
-        "text": "发起"
-      },
-      {
         "pagePath": "pages/group/group",
         "text": "群板"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "text": "我的"
       }
     ]
   },

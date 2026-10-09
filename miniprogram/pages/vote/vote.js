@@ -17,6 +17,14 @@ Page({
       .catch(() => wx.showToast({ title: '网络不太好，请稍后再试', icon: 'none' }))
   },
 
+  // 定档确认页返回时刷新(decision lock 后回到本页即出已定档视图);GET 幂等
+  onShow() {
+    if (this.loadedOnce && this.voteId && wx.getStorageSync('yivote_token')) {
+      this.load()
+    }
+    this.loadedOnce = true
+  },
+
   load() {
     const qs = this.openGId ? '?openGId=' + encodeURIComponent(this.openGId) : ''
     return request('/api/votes/' + this.voteId + qs).then((vote) => {
@@ -58,13 +66,18 @@ Page({
       lockedLabel = ls ? ls.label : ''
       lockedCount = lockedVoters.length
     }
+    // 提交后 feedback 卡文案:已记下您的时间
+    const feedbackLabels = this.data.submitted
+      ? vote.slots.filter((s) => pickedSet[s.slotId]).map((s) => s.label).join('、')
+      : ''
     this.setData({
       vote: { ...vote, slots },
-      bestLabel: best.length ? best[0].label + ' · ' : '',
+      bestLabel: best.length ? best[0].label : '',
       progress,
       lockedVoters,
       lockedLabel,
       lockedCount,
+      feedbackLabels,
     })
   },
 
@@ -91,21 +104,20 @@ Page({
       .catch(() => {})
   },
 
-  lockBest() {
-    const best = this.data.vote.slots.filter((s) => s.isBest)[0]
-    if (!best) return
-    request('/api/votes/' + this.voteId + '/lock', {
-      method: 'POST',
-      data: { slotId: best.slotId },
-    })
-      .then(() => {
-        wx.showToast({ title: '定了！', icon: 'success' })
-        this.load()
-      })
-      .catch(() => {})
+  /** 改投:回到可编辑态(picked 已预亮),确认后 PUT 幂等覆盖 */
+  editVote() {
+    this.setData({ submitted: false })
+    this.load()
+    wx.showToast({ title: '可以重新选择，确认后覆盖之前的时间', icon: 'none' })
   },
 
-  shareResult() { /* 转发结果卡，见 onShareAppMessage */ },
+  /** 组织者进定档确认页(最优时段 + 到场名单 → 就定这个时间) */
+  goDecision() {
+    wx.navigateTo({
+      url: '/pages/decision/decision?voteId=' + this.voteId
+        + (this.openGId ? '&openGId=' + encodeURIComponent(this.openGId) : ''),
+    })
+  },
 
   goCalendar() {
     wx.navigateTo({ url: '/pages/calendar/calendar?openGId=' + encodeURIComponent(this.openGId) })

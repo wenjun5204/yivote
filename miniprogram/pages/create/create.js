@@ -75,8 +75,8 @@ Page({
         })
       )
       .then((vote) => {
-        // 创建成功 → 直达详情页；分享卡片在详情页触发（三段式标题）
-        wx.navigateTo({ url: '/pages/vote/vote?voteId=' + vote.voteId })
+        // 创建成功 → 直达详情页(redirectTo 替换本页,返回时不再回到表单)；分享卡片在详情页触发（三段式标题）
+        wx.redirectTo({ url: '/pages/vote/vote?voteId=' + vote.voteId })
       })
       .catch(() => {})
   },

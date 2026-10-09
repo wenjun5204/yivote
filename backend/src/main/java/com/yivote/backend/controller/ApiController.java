@@ -14,6 +14,7 @@ import com.yivote.backend.dto.CollectDtos.CollectMineResponse;
 import com.yivote.backend.dto.CollectDtos.RenameRequest;
 import com.yivote.backend.dto.TodoDtos.TodoCreateRequest;
 import com.yivote.backend.dto.TodoDtos.TodoDetail;
+import com.yivote.backend.dto.TodoDtos.TodoGroupResponse;
 import com.yivote.backend.dto.TodoDtos.TodoMineResponse;
 import com.yivote.backend.dto.VoteDtos.BallotSubmitRequest;
 import com.yivote.backend.dto.VoteDtos.LockRequest;
@@ -174,5 +175,12 @@ public class ApiController {
     @GetMapping("/groups/{openGId}/calendar")
     public GroupCalendar groupCalendar(@PathVariable String openGId, @RequestParam String month) {
         return groupService.calendar(openGId, month);
+    }
+
+    @GetMapping("/groups/{openGId}/todos")
+    public TodoGroupResponse groupTodos(@PathVariable String openGId) {
+        TodoGroupResponse response = new TodoGroupResponse();
+        response.setItems(todoService.groupTodos(openGId, CurrentUser.get()));
+        return response;
     }
 }

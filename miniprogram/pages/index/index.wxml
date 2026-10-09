@@ -8,6 +8,17 @@
   </view>
 
   <view class="section-head">
+    <text>一件事的全流程</text>
+    <text class="sub">点开接着办</text>
+  </view>
+  <view class="chain">
+    <button class="chain-btn active" data-step="vote" bindtap="goChain"><text class="ico">🗳️</text><text class="lbl">凑时间</text></button>
+    <button class="chain-btn" data-step="todo" bindtap="goChain"><text class="ico">✅</text><text class="lbl">凑分工</text></button>
+    <button class="chain-btn" data-step="calendar" bindtap="goChain"><text class="ico">📅</text><text class="lbl">沉淀</text></button>
+    <button class="chain-btn" data-step="group" bindtap="goChain"><text class="ico">🧩</text><text class="lbl">群资产</text></button>
+  </view>
+
+  <view class="section-head">
     <text>进行中的活动</text>
     <text class="sub">{{items.length}} 场</text>
   </view>

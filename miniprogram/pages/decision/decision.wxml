@@ -1,0 +1,17 @@
+<!-- 定档确认：组织者两步定档的第二步(对照原型 index-optimized decision 屏) -->
+<view class="page" wx:if="{{loaded}}">
+  <view class="decision-card">
+    <view class="label">当前最优时间</view>
+    <view class="h">{{bestLabel}}</view>
+    <view class="p"><text class="strong">{{bestCount}}</text> 人有空，其他时段最多 {{secondCount}} 人。定档后投票停止，大家都能看到结果。</view>
+    <view class="people-row">
+      <view class="face" wx:for="{{people}}" wx:key="userId">{{item.nickname[0]}}</view>
+      <text class="people-more" wx:if="{{peopleCount > people.length}}">等 {{peopleCount}} 人</text>
+    </view>
+    <button class="lock-btn" bindtap="lock">就定这个时间</button>
+  </view>
+  <view class="organizer-note">定档会生成一张结果卡片，您可以主动发回群里通知大家；这不会影响活动本身。</view>
+</view>
+<view class="page" wx:else>
+  <view class="loading">正在打开投票…</view>
+</view>

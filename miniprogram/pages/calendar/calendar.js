@@ -107,7 +107,7 @@ Page({
   },
 
   goCreate() {
-    wx.switchTab({ url: '/pages/create/create' })
+    wx.navigateTo({ url: '/pages/create/create' })
   },
 
   onShareAppMessage() {

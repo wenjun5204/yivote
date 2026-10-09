@@ -78,7 +78,7 @@ Page({
     ensureLogin()
       .then(() => request('/api/collects', { method: 'POST', data: { title, fields } }))
       .then((collect) => {
-        wx.navigateTo({ url: '/pages/collect/collect?collectId=' + collect.collectId })
+        wx.redirectTo({ url: '/pages/collect/collect?collectId=' + collect.collectId })
       })
       .catch(() => {})
   },

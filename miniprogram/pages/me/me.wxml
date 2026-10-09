@@ -1,0 +1,37 @@
+<!-- 我的 tab:个人档案卡 + 我发起的/我参与的(数据:三个 mine 接口按 myRole 分桶) -->
+<view class="page">
+  <view class="me-card">
+    <view class="me-row">
+      <view class="avatar">{{(user && user.nickname[0]) || '友'}}</view>
+      <view class="me-info">
+        <view class="me-name">{{(user && user.nickname) || '微信用户'}}</view>
+        <view class="me-sub">我发起 {{owned.length}} 场 · 我参与 {{joined.length}} 场</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-head"><text>我发起的</text><text class="sub">{{owned.length}} 场</text></view>
+  <view wx:if="{{loading}}" class="empty">正在加载…</view>
+  <view wx:elif="{{owned.length === 0}}" class="empty">发起的第一场活动，会记在这里\n方便下次再约同一群人</view>
+  <button wx:for="{{owned}}" wx:key="uid" class="activity" data-kind="{{item.kind}}" data-ref="{{item.refId}}" bindtap="openActivity">
+    <view class="activity-body">
+      <view class="activity-title">{{item.title}}</view>
+      <view class="activity-sub" wx:if="{{item.kind === 'VOTE'}}">已投 {{item.voterCount}} 人 · {{item.status === 'OPEN' ? '进行中' : '已定档'}}</view>
+      <view class="activity-sub" wx:elif="{{item.kind === 'COLLECT'}}">已填 {{item.filledCount}} 人 · {{item.status === 'OPEN' ? '进行中' : '已收表'}}</view>
+      <view class="activity-sub" wx:else>{{item.summary.done}}/{{item.summary.total}} 件事搞定 · {{item.status === 'OPEN' ? '进行中' : '全办成了'}}</view>
+    </view>
+    <view class="arrow">›</view>
+  </button>
+
+  <view class="section-head"><text>我参与的</text><text class="sub">{{joined.length}} 场</text></view>
+  <view wx:if="{{!loading && joined.length === 0}}" class="empty">从群里点开一张卡片投上一票\n参与过的活动都会记在这里</view>
+  <button wx:for="{{joined}}" wx:key="uid" class="activity" data-kind="{{item.kind}}" data-ref="{{item.refId}}" bindtap="openActivity">
+    <view class="activity-body">
+      <view class="activity-title">{{item.title}}</view>
+      <view class="activity-sub" wx:if="{{item.kind === 'VOTE'}}">已投 {{item.voterCount}} 人 · {{item.status === 'OPEN' ? '进行中' : '已定档'}}</view>
+      <view class="activity-sub" wx:elif="{{item.kind === 'COLLECT'}}">已填 {{item.filledCount}} 人 · {{item.status === 'OPEN' ? '进行中' : '已收表'}}</view>
+      <view class="activity-sub" wx:else>{{item.summary.done}}/{{item.summary.total}} 件事搞定 · {{item.status === 'OPEN' ? '进行中' : '全办成了'}}</view>
+    </view>
+    <view class="arrow">›</view>
+  </button>
+</view>

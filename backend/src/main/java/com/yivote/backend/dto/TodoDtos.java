@@ -150,4 +150,12 @@ public final class TodoDtos {
         public List<TodoSummary> getItems() { return items; }
         public void setItems(List<TodoSummary> items) { this.items = items; }
     }
+
+    /** 群板「进行中的分工」:本群 OPEN 待办列表(复用 TodoSummary) */
+    public static class TodoGroupResponse {
+        private List<TodoSummary> items;
+
+        public List<TodoSummary> getItems() { return items; }
+        public void setItems(List<TodoSummary> items) { this.items = items; }
+    }
 }

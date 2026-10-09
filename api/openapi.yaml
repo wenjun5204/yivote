@@ -387,6 +387,25 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/GroupCalendar' }
 
+  /api/groups/{openGId}/todos:
+    get:
+      operationId: groupTodos
+      summary: 群板「进行中的分工」——本群 OPEN 状态的待办列表
+      tags: [group]
+      parameters:
+        - { name: openGId, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: 该群进行中的待办（空群返回空列表）
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: '#/components/schemas/TodoSummary' }
+
 components:
   schemas:
     LoginResponse:
@@ -627,6 +646,6 @@ components:
         todoId: { type: integer, format: int64 }
         title: { type: string }
         status: { type: string, enum: [OPEN, DONE] }
-        myRole: { type: string, enum: [OWNER, CLAIMER, NONE], description: "OWNER=我发起；CLAIMER=我认领过" }
+        myRole: { type: string, enum: [OWNER, CLAIMER, NONE], description: "OWNER=我发起；CLAIMER=我认领过；NONE=路过群友（群板视角）" }
         summary: { $ref: '#/components/schemas/TodoCounts' }
         updatedAt: { type: string, format: date-time }

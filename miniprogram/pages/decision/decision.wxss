@@ -1,0 +1,17 @@
+.page { padding: 40rpx 36rpx 80rpx; }
+.loading { text-align: center; color: #667067; padding: 200rpx 0; }
+.decision-card {
+  padding: 34rpx;
+  border: 3rpx solid #d4b937;
+  border-radius: 34rpx;
+  background: linear-gradient(145deg, #fffceb, #fff);
+}
+.label { display: inline-block; padding: 8rpx 16rpx; border-radius: 14rpx; background: #ffe66b; color: #655400; font-size: 22rpx; font-weight: 800; }
+.h { font-size: 46rpx; font-weight: 800; margin: 20rpx 0 8rpx; }
+.p { font-size: 26rpx; color: #667067; line-height: 1.6; }
+.strong { color: #0e5937; font-weight: 800; font-size: 30rpx; }
+.people-row { display: flex; align-items: center; gap: 12rpx; margin: 32rpx 0; }
+.face { width: 62rpx; height: 62rpx; border-radius: 50%; background: #dbeef9; color: #216785; display: flex; align-items: center; justify-content: center; font-size: 26rpx; font-weight: 800; border: 4rpx solid #fffdf1; }
+.people-more { margin-left: 8rpx; color: #667067; font-size: 24rpx; }
+.lock-btn { background: #18794e; color: #fff; font-size: 34rpx; font-weight: 800; border-radius: 28rpx; box-shadow: 0 16rpx 28rpx rgba(24, 121, 78, .22); }
+.organizer-note { margin-top: 36rpx; color: #667067; font-size: 24rpx; line-height: 1.7; }

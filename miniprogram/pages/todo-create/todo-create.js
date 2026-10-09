@@ -90,7 +90,7 @@ Page({
     ensureLogin()
       .then(() => request('/api/todos', { method: 'POST', data }))
       .then((todo) => {
-        wx.navigateTo({ url: '/pages/todo/todo?todoId=' + todo.todoId + (this.openGId ? '&openGId=' + encodeURIComponent(this.openGId) : '') })
+        wx.redirectTo({ url: '/pages/todo/todo?todoId=' + todo.todoId + (this.openGId ? '&openGId=' + encodeURIComponent(this.openGId) : '') })
       })
       .catch(() => {})
   },
